@@ -1,2 +1,3 @@
-# dslink-dart-zabbix
-Zabbix DS Link
+# Zabbix DS Link
+
+DSLink to connect with Zabbix monitoring systems.
