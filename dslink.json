@@ -1,0 +1,24 @@
+{
+  "name" : "dslink-dart-zabbix",
+  "version" : "1.0.0",
+  "description" : "Zabbix DSLink",
+  "main" : "bin/run.dart",
+  "engines" : {
+    "dart" : ">1.11.0"
+  },
+  "getDependencies" : [
+    "pub get"
+  ],
+  "configs" : {
+    "broker" : {
+      "type" : "url"
+    },
+    "name" : {
+      "type" : "string",
+      "default" : "Zabbix"
+    },
+    "token" : {
+      "type" : "string"
+    }
+  }
+}
