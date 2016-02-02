@@ -33,7 +33,6 @@ class RemoveConnection extends SimpleNode {
     var ret = { 'success' : false, 'message' : '' };
 
     _link.removeNode(parent.path);
-
     ret['success'] = true;
     ret['message'] = 'Success!';
     return ret;

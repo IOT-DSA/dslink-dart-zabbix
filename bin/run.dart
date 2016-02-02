@@ -13,6 +13,7 @@ Future main(List<String> args) async {
       profiles: {
         ZabbixNode.isType : (String path) => new ZabbixNode(path, link),
         AddConnection.isType : (String path) => new AddConnection(path, link),
+        RemoveConnection.isType : (String path) => new RemoveConnection(path, link),
         EditConnection.isType : (String path) => new EditConnection(path)
       }, autoInitialize: false);
 

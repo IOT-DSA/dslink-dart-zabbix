@@ -19,7 +19,9 @@ class ZabbixNode extends SimpleNode {
     RemoveConnection.pathName : RemoveConnection.definition()
   };
 
-  ZabbixNode(String path, this._link) : super(path);
+  ZabbixNode(String path, this._link) : super(path) {
+    _clientComp = new Completer<ZabbixClient>();
+  }
 
   Future<ZabbixClient> get client => _clientComp.future;
 
@@ -33,7 +35,7 @@ class ZabbixNode extends SimpleNode {
     var username = getConfig(r'$$zb_user');
     var password = getConfig(r'$$zb_pass');
     var address = getConfig(r'$$zb_addr');
-    _refreshRate = int.parse(getConfig(r'$$zb_refresh'), onError: (_) => 30);
+    _refreshRate = getConfig(r'$$zb_refresh');
 
     _client = new ZabbixClient(address, username, password);
 

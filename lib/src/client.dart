@@ -41,13 +41,14 @@ class ZabbixClient {
     _username = user;
     _password = pass;
 
-    if (!uri.endsWith('api_jsonrpc.php')) {
-      if  (!uri.endsWith('/')) {
-        uri += '/';
+    var url = uri;
+    if (!url.endsWith('api_jsonrpc.php')) {
+      if  (!url.endsWith('/')) {
+        url += '/';
       }
-      uri += 'api_jsonrpc.php';
+      url += 'api_jsonrpc.php';
     }
-    _uri = Uri.parse(uri);
+    _uri = Uri.parse(url);
     _pending = new Queue<PendingRequest>();
     _client = new HttpClient();
   }
@@ -91,7 +92,7 @@ class ZabbixClient {
       authenticated = true;
       ret['success'] = true;
     } else {
-      ret['error'] = res['error'];
+      ret['error'] = res['error']['data'];
     }
     return ret;
   }
@@ -189,7 +190,11 @@ class ZabbixClient {
             'does not match request id: ${preq.id}');
         preq._completer.completeError(allResults['id']);
       } else {
-        preq._completer.complete({'result' : allResults['result']});
+        if (allResults.containsKey('error')) {
+          preq._completer.complete({'error' : allResults['error']});
+        } else {
+          preq._completer.complete({'result' : allResults['result']});
+        }
       }
     } else {
       for (Map res in allResults) {
