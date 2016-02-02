@@ -23,8 +23,19 @@ class ZabbixClient {
     'auth': null
   };
 
-  factory ZabbixClient(String uri, String user, String pass) =>
-      _cache[uri] ??= new ZabbixClient._(uri, user, pass);
+  factory ZabbixClient(String uri, String user, String pass) {
+    var cache = _cache[uri];
+    if (cache == null) {
+      return _cache[uri] = new ZabbixClient._(uri, user, pass);
+    }
+
+    if (cache.authenticated) return cache;
+    if (cache.uri == uri && cache._username == user && cache._password == pass) {
+      return cache;
+    } else {
+      return _cache[uri] = new ZabbixClient._(uri, user, pass);
+    }
+  }
 
   ZabbixClient._(this.uri, String user, String pass) {
     _username = user;
@@ -54,17 +65,21 @@ class ZabbixClient {
   Queue<PendingRequest> _pending;
 
   Future<Map> authenticate() async {
+    var ret = {'success' : false};
+    if (authenticated && _auth != null) {
+      ret['success'] = true;
+    }
+
     var params = { 'user': _username, 'password' : _password };
     var req = new PendingRequest(RequestMethod.userLogin, params, ++_requestId);
     req.isAuthentication = true;
 
     var res;
-    var ret = {'success' : false};
     try {
       res = await sendRequest(req);
-    } on HttpException catch (e) {
+    } on HttpException {
       ret['error'] = 'Error querying server';
-    } on FormatException catch (e) {
+    } on FormatException  {
       ret['error'] = 'Error parsing results';
     } catch (e) {
       ret['error'] = 'Unknown error';
@@ -72,6 +87,7 @@ class ZabbixClient {
 
     if (res.containsKey('result')) {
       _auth = res['result'];
+      authenticated = true;
       ret['success'] = true;
     } else {
       ret['error'] = res['error'];
