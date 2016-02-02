@@ -11,8 +11,9 @@ Future main(List<String> args) async {
 
   link = new LinkProvider(args, 'Zabbix-', command: 'run',
       profiles: {
-        ZabbixNode.isType : (String path) => new ZabbixNode(path),
-        AddConnection.isType : (String path) => new AddConnection(path, link)
+        ZabbixNode.isType : (String path) => new ZabbixNode(path, link),
+        AddConnection.isType : (String path) => new AddConnection(path, link),
+        EditConnection.isType : (String path) => new EditConnection(path)
       }, autoInitialize: false);
 
   link.init();

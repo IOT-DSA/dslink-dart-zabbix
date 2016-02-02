@@ -68,6 +68,7 @@ class ZabbixClient {
     var ret = {'success' : false};
     if (authenticated && _auth != null) {
       ret['success'] = true;
+      return ret;
     }
 
     var params = { 'user': _username, 'password' : _password };

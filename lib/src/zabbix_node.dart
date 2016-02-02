@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:dslink/dslink.dart';
 import 'client.dart';
+import 'connection_edit.dart';
 import 'connection_remove.dart';
 
 class ZabbixNode extends SimpleNode {
@@ -14,16 +15,18 @@ class ZabbixNode extends SimpleNode {
     r'$$zb_user' : params['username'],
     r'$$zb_pass' : params['password'],
     r'$$zb_refresh' : params['refreshRate'],
+    EditConnection.pathName : EditConnection.definition(params),
     RemoveConnection.pathName : RemoveConnection.definition()
   };
 
-  ZabbixNode(String path) : super(path);
+  ZabbixNode(String path, this._link) : super(path);
 
   Future<ZabbixClient> get client => _clientComp.future;
 
   ZabbixClient _client;
   int _refreshRate;
   Completer<ZabbixClient> _clientComp;
+  LinkProvider _link;
 
   @override
   void onCreated() {
@@ -33,11 +36,33 @@ class ZabbixNode extends SimpleNode {
     _refreshRate = int.parse(getConfig(r'$$zb_refresh'), onError: (_) => 30);
 
     _client = new ZabbixClient(address, username, password);
-    _clientComp.complete(_client);
+
+    _client.authenticate().then((_) {
+      _clientComp.complete(_client);
+    });
   }
 
   @override
   void onRemoving() {
     _client.close();
+  }
+
+  void updateConfig(Map params, ZabbixClient newClient) {
+    configs[r'$$zb_user'] = params['username'].trim();
+    configs[r'$$zb_pass'] = params['password'];
+    configs[r'$$zb_addr'] = params['address'];
+    configs[r'$$zb_refresh'] = params['refreshRate'];
+
+    if (newClient != _client) {
+      _client.close();
+      _client = newClient;
+      _clientComp = new Completer()..complete(_client);
+    }
+
+    _link.removeNode('$path/${EditConnection.pathName}');
+    _link.addNode('$path/${EditConnection.pathName}',
+          EditConnection.definition(params));
+
+    _link.save();
   }
 }

@@ -82,9 +82,8 @@ class AddConnection extends SimpleNode {
     var res = await client.authenticate();
     ret['success'] = res['success'];
     if (res['success'] == true) {
-      // TODO: If successful, add ZabbixNode.
       var name = NodeNamer.createName(params['name'].trim());
-      var node = _link.addNode('/$name', ZabbixNode.definition(params));
+      _link.addNode('/$name', ZabbixNode.definition(params));
       ret['message'] = 'Success!';
     } else {
       ret['message'] = res['error'];
