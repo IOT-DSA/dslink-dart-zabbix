@@ -55,6 +55,7 @@ class ZabbixClient {
 
   bool authenticated = false;
   bool requestPending = false;
+  bool expired = false;
   String uri;
 
   String _username;
@@ -230,7 +231,7 @@ class ZabbixClient {
       });
       _pending.clear();
     }
-
+    expired = true;
     _cache.remove(uri);
   }
 

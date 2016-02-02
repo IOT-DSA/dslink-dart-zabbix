@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:dslink/dslink.dart';
 import 'client.dart';
+import 'common.dart';
 import 'connection_edit.dart';
 import 'connection_remove.dart';
 
@@ -24,6 +25,7 @@ class ZabbixNode extends SimpleNode {
   }
 
   Future<ZabbixClient> get client => _clientComp.future;
+  ZabbixNode get rootParent => this;
 
   ZabbixClient _client;
   int _refreshRate;
@@ -66,5 +68,9 @@ class ZabbixNode extends SimpleNode {
           EditConnection.definition(params));
 
     _link.save();
+  }
+
+  void addSubscription(ZabbixChild child) {
+    // TODO: Add implementation for Subscriptions/Timers
   }
 }
