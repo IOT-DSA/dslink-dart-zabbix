@@ -1,10 +1,12 @@
-library dslink.zabbix.nodes.add_connection;
+library dslink.zabbix.nodes.connection_add;
 
 import 'dart:async';
 
 import 'package:dslink/dslink.dart';
+import 'package:dslink/nodes.dart' show NodeNamer;
 
 import 'client.dart';
+import 'zabbix_node.dart';
 
 class AddConnection extends SimpleNode {
   static const String isType = 'addConnectionNode';
@@ -57,7 +59,9 @@ class AddConnection extends SimpleNode {
     ]
   };
 
-  AddConnection(String path) : super(path);
+  LinkProvider _link;
+
+  AddConnection(String path, this._link) : super(path);
 
   @override
   Future<Map<String, dynamic>> onInvoke(Map<String, dynamic> params) async {
@@ -78,13 +82,15 @@ class AddConnection extends SimpleNode {
     var res = await client.authenticate();
     ret['success'] = res['success'];
     if (res['success'] == true) {
+      // TODO: If successful, add ZabbixNode.
+      var name = NodeNamer.createName(params['name'].trim());
+      var node = _link.addNode('/$name', ZabbixNode.definition(params));
       ret['message'] = 'Success!';
     } else {
       ret['message'] = res['error'];
     }
 
-    // TODO: If successful, add ZabbixNode.
-
     return ret;
   }
+
 }

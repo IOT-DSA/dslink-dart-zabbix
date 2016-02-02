@@ -1,3 +1,4 @@
 library dslink.zabbix.nodes;
 
-export 'src/add_connection.dart';
+export 'src/connection_add.dart';
+export 'src/zabbix_node.dart';

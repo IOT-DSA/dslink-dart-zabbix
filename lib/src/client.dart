@@ -200,6 +200,18 @@ class ZabbixClient {
     _sendRequests();
   }
 
+  void close() {
+    _client.close(force: true);
+    if (_pending.isNotEmpty) {
+      _pending.forEach((pr) {
+        pr._completer.complete(null);
+      });
+      _pending.clear();
+    }
+
+    _cache.remove(uri);
+  }
+
 }
 
 class PendingRequest {
