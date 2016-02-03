@@ -9,6 +9,7 @@ import 'package:dslink/utils.dart' show logger;
 
 abstract class RequestMethod {
   static const String userLogin = 'user.login';
+  static const String hostGet = 'host.get';
 }
 
 
@@ -98,6 +99,16 @@ class ZabbixClient {
     return ret;
   }
 
+  Future<Map> makeRequest(String requestMethod, Map params) {
+    if (params == null) {
+      params = {'output' : 'extend'};
+    } else {
+      params['output'] ??= 'extend';
+    }
+    var pr = new PendingRequest(requestMethod, params, ++_requestId);
+    return sendRequest(pr);
+  }
+
   Future<Map> sendRequest(PendingRequest request) {
     if (!authenticated && request.isAuthentication) {
       _pending.addFirst(request);
@@ -113,7 +124,7 @@ class ZabbixClient {
 
     requestPending = true;
     PendingRequest preq;
-    HashMap<int, PendingRequest> requests;
+    HashMap<int, PendingRequest> requests = new HashMap<int, PendingRequest>();
     var body;
     var batch = false;
 
@@ -157,6 +168,7 @@ class ZabbixClient {
     var allResults;
     try {
       var bodyStr = JSON.encode(body);
+      logger.finest('Requests: $bodyStr');
       var req = await _client.postUrl(_uri);
       req.headers.contentType =
           ContentType.parse('application/json-rpc; charset=utf-8');

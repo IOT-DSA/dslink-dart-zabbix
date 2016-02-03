@@ -47,5 +47,20 @@ abstract class ZabbixChild extends SimpleNode {
   void addSubscription() {
     _rootParent.addSubscription(this);
   }
+}
 
+class ZabbixValue extends ZabbixChild {
+  static final String isType = 'zabbixValueNode';
+  static Map<String, dynamic> definition(String name, String type,
+                              dynamic value, bool writable) => {
+      r'$is' : isType,
+      r'$name' : name,
+      r'$type' : type,
+      r'?value' : value,
+      r'$writable' : (writable ? 'write' : 'never')
+  };
+
+  ZabbixValue(String path) : super(path);
+
+  // TODO: Overried onSubscribe/onUnsubscribe/onSetValue
 }

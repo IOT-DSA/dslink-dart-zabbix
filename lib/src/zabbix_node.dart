@@ -3,10 +3,13 @@ library dslink.zabbix.nodes.zabbix;
 import 'dart:async';
 
 import 'package:dslink/dslink.dart';
+import 'package:dslink/nodes.dart';
+
 import 'client.dart';
 import 'common.dart';
 import 'connection_edit.dart';
 import 'connection_remove.dart';
+import 'zabbix_host.dart';
 
 class ZabbixNode extends SimpleNode {
   static const String isType = 'zabbixNode';
@@ -42,7 +45,20 @@ class ZabbixNode extends SimpleNode {
     _client = new ZabbixClient(address, username, password);
 
     _client.authenticate().then((_) {
-      _clientComp.complete(_client);
+      return _clientComp.complete(_client);
+    }).then((_) {
+      return _client.makeRequest(RequestMethod.hostGet, null);
+    }).then((result) {
+      var hostList = result['result'] as List;
+      var hostNode = provider.getOrCreateNode('$path/Hosts');
+      for (Map host in hostList) {
+        var name = NodeNamer.createName(host['name']);
+        provider.addNode('${hostNode.path}/$name', ZabbixHost.definition(host));
+        _client.makeRequest(RequestMethod.hostGet, {'hostids' : host['hostid'],
+                  'selectInventory' : []}).then((result) {
+          print(result);
+        });
+      }
     });
   }
 
