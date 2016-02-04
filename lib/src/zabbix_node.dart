@@ -10,6 +10,7 @@ import 'common.dart';
 import 'connection_edit.dart';
 import 'connection_remove.dart';
 import 'zabbix_host.dart';
+import 'zabbix_item.dart';
 
 class ZabbixNode extends SimpleNode {
   static const String isType = 'zabbixNode';
@@ -51,13 +52,23 @@ class ZabbixNode extends SimpleNode {
     }).then((result) {
       var hostList = result['result'] as List;
       var hostNode = provider.getOrCreateNode('$path/Hosts');
+      var hostIds = [];
       for (Map host in hostList) {
-        var name = NodeNamer.createName(host['name']);
+        var name = NodeNamer.createName(host['hostid']);
         provider.addNode('${hostNode.path}/$name', ZabbixHost.definition(host));
-        _client.makeRequest(RequestMethod.hostGet, {'hostids' : host['hostid'],
-                  'selectInventory' : []}).then((result) {
-          print(result);
-        });
+        hostIds.add(host['hostid']);
+      }
+      return _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds});
+    }).then((result) {
+      for (Map tmp in result['result']) {
+        var host = ZabbixHost.getById(tmp['hostid']);
+        if (host == null) {
+          print("Error! Can't get node: ${tmp['hostid']}");
+          return;
+        }
+        var path = provider.getOrCreateNode('${host.path}/items');
+        var name = NodeNamer.createName(tmp['itemid']);
+        provider.addNode('${path.path}/$name', ZabbixItem.definition(tmp));
       }
     });
   }
@@ -89,4 +100,6 @@ class ZabbixNode extends SimpleNode {
   void addSubscription(ZabbixChild child) {
     // TODO: Add implementation for Subscriptions/Timers
   }
+
+  void updateChild(String path, String name, value) {}
 }
