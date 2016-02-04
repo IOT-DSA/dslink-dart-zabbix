@@ -13,6 +13,7 @@ abstract class RequestMethod {
   static const String userLogin = 'user.login';
 
   static const String itemGet = 'item.get';
+  static const String itemUpdate = 'item.update';
 }
 
 
@@ -127,7 +128,6 @@ class ZabbixClient {
 
     requestsPending += 1;
     PendingRequest preq;
-    HashMap<int, PendingRequest> requests = new HashMap<int, PendingRequest>();
     var body;
 
     if (!authenticated) {

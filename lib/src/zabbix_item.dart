@@ -1,10 +1,16 @@
 library dslink.zabbix.nodes.zabbix_item;
 
+import 'dart:async';
+
+import 'package:dslink/utils.dart' show logger;
+
 import 'common.dart';
+import 'client.dart';
 
 class ZabbixItem extends ZabbixChild {
   static const String isType = 'zabbixItemNode';
 
+  static const authTypes = const ['password', 'public key'];
   static const itemTypes = const ['Zabbix Agent', 'SNMPv1 Agent', 'Zabbix Trapper',
       'Simple Check', 'SNMPv2 Agent', 'Zabbix Internal', 'SNMPv3 Agent',
       'Zabbix Agent (active)', 'Zabbix Aggregate', 'Web Item',
@@ -18,6 +24,8 @@ class ZabbixItem extends ZabbixChild {
   static const snmpv3AuthProtocols = const ['MD5', 'SHA'];
   static const snmpv3PrivProtocols = const ['DES', 'AES'];
   static const snmpv3SecurityLevels = const ['noAuthNoPriv', 'authNoPriv', 'authPriv'];
+  static const states = const['normal', 'not supported'];
+  static const statuses = const ['enabled', 'disabled'];
 
   static Map<String, dynamic> definition(Map item) {
     var itmType = itemTypes[int.parse(item['type'])];
@@ -29,6 +37,7 @@ class ZabbixItem extends ZabbixChild {
     var snmpv3Seclvl = snmpv3SecurityLevels[int.parse(item['snmpv3_securitylevel'])];
 
     return {
+      r'$is' : isType,
       r'$name' : item['key_'],
       'itemid' : ZabbixValue.definition('Item ID', 'string', item['itemid'], false),
       'delay' : ZabbixValue.definition('Delay', 'number', item['delay'], true),
@@ -42,14 +51,12 @@ class ZabbixItem extends ZabbixChild {
       'value_type' : ZabbixValue.definition('Value Type',
           'enum[${valueTypes.join(',')}]', valType, true),
       'authtype' : ZabbixValue.definition(
-          'SSH Authentication Method',
-          'enum[password,public key]',
-          (item['authtype'] == '0' ? 'password' : 'public key'),
-          true),
+          'SSH Authentication Method', 'enum[${authTypes.join(',')}]',
+          authTypes[int.parse(item['authtype'])], true),
       'data_type' : ZabbixValue.definition('Data Type', 'enum[${dataTypes.join(',')}]',
           dataType, true),
       'delay_flex' : ZabbixValue.definition('Delay Flex', 'string', item['data_flex'], true),
-      'delta_type' : ZabbixValue.definition('Delta Type', 'enum[${deltaTypes.join(',')}]',
+      'delta' : ZabbixValue.definition('Delta Type', 'enum[${deltaTypes.join(',')}]',
           deltaType, true),
       'description' : ZabbixValue.definition('Description', 'string',
           item['description'], true),
@@ -105,8 +112,10 @@ class ZabbixItem extends ZabbixChild {
         'snmpv3_securityname' : ZabbixValue.definition('Security name', 'string',
             item['snmpv3_securityname'], true)
       },
-      'state' : ZabbixValue.definition('State', 'enum[enabled,disabled]',
-          (item['state'] == '0' ? 'enabled' : 'disabled'), true),
+      'state' : ZabbixValue.definition('State', 'enum[${states.join(',')}]',
+          states[int.parse(item['state'])], false),
+      'status' : ZabbixValue.definition('Status', 'enum[${statuses.join(',')}]',
+          statuses[int.parse(item['status'])], true),
       'templateid' : ZabbixValue.definition('Template Id', 'string',
           item['templateid'], false),
       'trapper_hosts' : ZabbixValue.definition('Trapper allowed hosts', 'string',
@@ -123,9 +132,59 @@ class ZabbixItem extends ZabbixChild {
   ZabbixItem(String path) : super(path);
 
 //TODO
-  bool updateChild(String path, String name, value) {
-    print('Update request for: $path');
-    print('$name: $value');
-    return true;
+  bool updateChild(String path, String valueName, newValue, oldValue) {
+    var itemid = name;
+    var sendVal;
+    switch (valueName) {
+      case 'type' :
+        sendVal = itemTypes.indexOf(newValue);
+        break;
+      case 'value_type':
+        sendVal = valueTypes.indexOf(newValue);
+        break;
+      case 'authtype':
+        sendVal = authTypes.indexOf(newValue);
+        break;
+      case 'data_type':
+        sendVal = dataTypes.indexOf(newValue);
+        break;
+      case 'delta':
+        sendVal = deltaTypes.indexOf(newValue);
+        break;
+      case 'snmpv3_authprotocol':
+        sendVal = snmpv3AuthProtocols.indexOf(newValue);
+        break;
+      case 'snmpv3_privprotocol':
+        sendVal = snmpv3PrivProtocols.indexOf(newValue);
+        break;
+      case 'snmpv3_securitylevel':
+        sendVal = snmpv3SecurityLevels.indexOf(newValue);
+        break;
+      case 'status':
+        sendVal = statuses.indexOf(newValue);
+        break;
+      default:
+        sendVal = newValue;
+        break;
+    }
+
+    var params = {
+      'itemid' : itemid,
+      valueName : sendVal
+    };
+
+    _updateValue(path, params, oldValue);
+
+    return false;
+  }
+
+  Future _updateValue(String path, Map params, oldValue) async {
+    var cl = await client;
+    var res = await cl.makeRequest(RequestMethod.itemUpdate, params);
+    if (res.containsKey('error')) {
+      logger.warning('Error updating: "$params" Server error: ${res['error']}');
+      provider.updateValue(path, oldValue);
+    }
+
   }
 }

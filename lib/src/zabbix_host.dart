@@ -1,6 +1,5 @@
 library dslink.zabbix.nodes.zabbix_host;
 
-import 'dart:async';
 import 'dart:collection';
 
 import 'common.dart';
@@ -106,7 +105,7 @@ class ZabbixHost extends ZabbixChild {
   }
 
   //TODO
-  bool updateChild(String path, String name, value) {
+  bool updateChild(String path, String valueName, newValue, oldValue) {
     print('Update request for: $path');
     print('$name: $value');
     return true;

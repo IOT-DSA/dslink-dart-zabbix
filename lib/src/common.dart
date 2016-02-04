@@ -11,10 +11,9 @@ abstract class ZabbixChild extends SimpleNode {
   Future<ZabbixClient> get client => _getClient();
   ZabbixClient _client;
 
-  ZabbixNode get rootParent {
-    if (_rootParent == null) {
-      _getClient();
-    }
+  Future<ZabbixNode> get rootParent async {
+    if (_rootParent == null) await _getClient();
+
     return _rootParent;
   }
 
@@ -30,8 +29,7 @@ abstract class ZabbixChild extends SimpleNode {
     }
 
     var p = parent;
-
-    while (p is! ZabbixNode || p is! ZabbixChild) {
+    while (p is! ZabbixNode && p is! ZabbixChild) {
       p = p.parent;
       if (p == null) break;
     }
@@ -40,7 +38,7 @@ abstract class ZabbixChild extends SimpleNode {
       throw new StateError('Unable to locate client');
     }
     _client = await p.client;
-    _rootParent = p.rootParent;
+    _rootParent = await p.rootParent;
     return _client;
   }
 
@@ -48,7 +46,7 @@ abstract class ZabbixChild extends SimpleNode {
     _rootParent.addSubscription(this);
   }
 
-  bool updateChild(String path, String name, value);
+  bool updateChild(String path, String valueName, newValue, oldValue);
 }
 
 class ZabbixValue extends ZabbixChild {
@@ -64,7 +62,7 @@ class ZabbixValue extends ZabbixChild {
 
   ZabbixValue(String path) : super(path);
 
-  bool updateChild(String path, String name, value) {
+  bool updateChild(String path, String valueName, newValue, oldValue) {
     var p = parent;
     while (p is! ZabbixChild && p is! ZabbixNode) {
       p = p.parent;
@@ -73,12 +71,12 @@ class ZabbixValue extends ZabbixChild {
     if (p != null) {
       print(p.name);
     }
-    var ret = p?.updateChild(path, name, value);
+    var ret = p?.updateChild(path, name, newValue, oldValue);
     return ret ?? false;
   }
 
   @override
-  bool onSetValue(Object value) => updateChild(path, name, value);
+  bool onSetValue(Object value) => updateChild(path, name, value, this.value);
 
 // TODO: Overried onSubscribe/onUnsubscribe
 }
