@@ -58,7 +58,7 @@ class ZabbixClient {
   }
 
   bool authenticated = false;
-  bool requestPending = false;
+  int requestsPending = 0;
   bool expired = false;
   String uri;
 
@@ -123,9 +123,9 @@ class ZabbixClient {
   }
 
   Future _sendRequests() async {
-    if (requestPending || _pending.isEmpty) return;
+    if (requestsPending >= maxRequests || _pending.isEmpty) return;
 
-    requestPending = true;
+    requestsPending += 1;
     PendingRequest preq;
     HashMap<int, PendingRequest> requests = new HashMap<int, PendingRequest>();
     var body;
@@ -133,7 +133,7 @@ class ZabbixClient {
     if (!authenticated) {
       if (!_pending.first.isAuthentication) {
         authenticate();
-        requestPending = false;
+        requestsPending -= 1;
         _sendRequests();
         return;
       }
@@ -183,7 +183,7 @@ class ZabbixClient {
       }
     }
 
-    requestPending = false;
+    requestsPending -= 1;
     _sendRequests();
   }
 
