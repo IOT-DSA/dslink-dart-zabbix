@@ -8,13 +8,16 @@ import 'dart:io';
 import 'package:dslink/utils.dart' show logger;
 
 abstract class RequestMethod {
-  static const String userLogin = 'user.login';
   static const String hostGet = 'host.get';
+
+  static const String userLogin = 'user.login';
+
+  static const String itemGet = 'item.get';
 }
 
 
 class ZabbixClient {
-  static const maxRequests = 5;
+  static const maxRequests = 3;
   static final Map<String, ZabbixClient> _cache = <String, ZabbixClient>{};
   static const Map defaultBody = const {
     'jsonrpc' : '2.0',
@@ -126,7 +129,6 @@ class ZabbixClient {
     PendingRequest preq;
     HashMap<int, PendingRequest> requests = new HashMap<int, PendingRequest>();
     var body;
-    var batch = false;
 
     if (!authenticated) {
       if (!_pending.first.isAuthentication) {
@@ -141,28 +143,12 @@ class ZabbixClient {
       body['params'] = preq.params;
       body['id'] = preq.id;
     } else {
-      if (_pending.length > 1) {
-        body = new List<Map>();
-        batch = true;
-        var len = (_pending.length > maxRequests ? maxRequests : _pending.length);
-        for (var i = 0; i < len; i++) {
-          var req = _pending.removeFirst();
-          var tmpBody = new Map.from(defaultBody);
-          tmpBody['method'] = req.method;
-          tmpBody['params'] = req.params;
-          tmpBody['id'] = req.id;
-          tmpBody['auth'] = _auth;
-          body.add(tmpBody);
-          requests[req.id] = req;
-        }
-      } else {
-        preq = _pending.removeFirst();
-        body = new Map.from(defaultBody);
-        body['method'] = preq.method;
-        body['params'] = preq.params;
-        body['id'] = preq.id;
-        body['auth'] = _auth;
-      }
+      preq = _pending.removeFirst();
+      body = new Map.from(defaultBody);
+      body['method'] = preq.method;
+      body['params'] = preq.params;
+      body['id'] = preq.id;
+      body['auth'] = _auth;
     }
 
     var allResults;
@@ -179,56 +165,22 @@ class ZabbixClient {
       logger.finest('All Results: $allResults');
     } on HttpException catch(e) {
       logger.warning('Unable to connect to server: $_uri', e);
-      if (!batch) {
-        preq._completer.completeError(e);
-      } else {
-        for (var r in requests.values) {
-          r._completer.completeError(e);
-        }
-      }
+      preq._completer.completeError(e);
     } catch (e) {
       logger.warning('Failed to handle request to: $_uri', e);
-      if (!batch) {
-        preq._completer.completeError(e);
-      } else {
-        for (var r in requests.values) {
-          r._completer.completeError(e);
-        }
-      }
+      preq._completer.completeError(e);
     }
 
-    if (!batch) {
-      if (allResults['id'] != preq.id) {
-        logger.warning('Response ID: ${allResults['id']} '
-            'does not match request id: ${preq.id}');
-        preq._completer.completeError(allResults['id']);
-      } else {
-        if (allResults.containsKey('error')) {
-          preq._completer.complete({'error' : allResults['error']});
-        } else {
-          preq._completer.complete({'result' : allResults['result']});
-        }
-      }
+    if (allResults['id'] != preq.id) {
+      logger.warning('Response ID: ${allResults['id']} '
+          'does not match request id: ${preq.id}');
+      preq._completer.completeError(allResults['id']);
     } else {
-      for (Map res in allResults) {
-        var resId = res['id'];
-        var req = (resId != null ? requests.remove(resId) : null);
-        if (res.containsKey('error')) {
-          logger.warning('Error response: $res');
-          if (req != null) {
-            req._completer.complete({'error' : res['error']});
-          }
-        } else {
-          if (req != null) {
-            req._completer.complete({'result' : res['result']});
-          }
-        }
+      if (allResults.containsKey('error')) {
+        preq._completer.complete({'error' : allResults['error']});
+      } else {
+        preq._completer.complete({'result' : allResults['result']});
       }
-      if (requests.keys.isNotEmpty) {
-        logger.warning('Missing results for requests: ${requests.keys}');
-        requests.values.forEach((pr) => pr._completer.completeError('No result'));
-      }
-      requests.clear();
     }
 
     requestPending = false;
