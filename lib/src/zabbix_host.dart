@@ -101,7 +101,14 @@ class ZabbixHost extends ZabbixChild {
 
   @override
   void onCreated() {
-    var hostId = provider.getNode('$path/hostid').value;
+    var hostId = provider.getNode('$path/hostId').value;
     _cache.putIfAbsent(hostId, () => this);
+  }
+
+  //TODO
+  bool updateChild(String path, String name, value) {
+    print('Update request for: $path');
+    print('$name: $value');
+    return true;
   }
 }

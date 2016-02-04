@@ -47,6 +47,8 @@ abstract class ZabbixChild extends SimpleNode {
   void addSubscription() {
     _rootParent.addSubscription(this);
   }
+
+  bool updateChild(String path, String name, value);
 }
 
 class ZabbixValue extends ZabbixChild {
@@ -62,5 +64,21 @@ class ZabbixValue extends ZabbixChild {
 
   ZabbixValue(String path) : super(path);
 
-  // TODO: Overried onSubscribe/onUnsubscribe/onSetValue
+  bool updateChild(String path, String name, value) {
+    var p = parent;
+    while (p is! ZabbixChild && p is! ZabbixNode) {
+      p = p.parent;
+      if (p == null) break;
+    }
+    if (p != null) {
+      print(p.name);
+    }
+    var ret = p?.updateChild(path, name, value);
+    return ret ?? false;
+  }
+
+  @override
+  bool onSetValue(Object value) => updateChild(path, name, value);
+
+// TODO: Overried onSubscribe/onUnsubscribe
 }
