@@ -116,7 +116,6 @@ class ZabbixHost extends ZabbixChild {
     _cache.putIfAbsent(hostId, () => this);
   }
 
-  //TODO
   bool updateChild(String path, String valueName, newValue, oldValue) {
     var hostid = name;
     var sendVal;

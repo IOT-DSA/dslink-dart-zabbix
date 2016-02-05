@@ -72,9 +72,8 @@ class ZabbixNode extends SimpleNode {
         var name = NodeNamer.createName(tmp['itemid']);
         provider.addNode('${path.path}/$name', ZabbixItem.definition(tmp));
       }
-      return _client.makeRequest(RequestMethod.alertGet, {'hostids': hostIds});
+      return _client.makeRequest(RequestMethod.alertGet, null);
     }).then((Map result) {
-      print(result);
       if (result == null) return;
       if (result.containsKey('error')) {
         logger.warning('Error retreiving alerts: ${result['error']}');
