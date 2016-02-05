@@ -17,7 +17,8 @@ Future main(List<String> args) async {
         EditConnection.isType : (String path) => new EditConnection(path),
         ZabbixHost.isType : (String path) => new ZabbixHost(path),
         ZabbixValue.isType : (String path) => new ZabbixValue(path),
-        ZabbixItem.isType : (String path) => new ZabbixItem(path)
+        ZabbixItem.isType : (String path) => new ZabbixItem(path),
+        ZabbixAlert.isType : (String path) => new ZabbixAlert(path)
       }, autoInitialize: false);
 
   link.init();

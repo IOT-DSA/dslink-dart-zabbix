@@ -4,11 +4,13 @@ import 'dart:async';
 
 import 'package:dslink/dslink.dart';
 import 'package:dslink/nodes.dart';
+import 'package:dslink/utils.dart';
 
 import 'client.dart';
 import 'common.dart';
 import 'connection_edit.dart';
 import 'connection_remove.dart';
+import 'zabbix_alert.dart';
 import 'zabbix_host.dart';
 import 'zabbix_item.dart';
 
@@ -45,6 +47,7 @@ class ZabbixNode extends SimpleNode {
 
     _client = new ZabbixClient(address, username, password);
 
+    var hostIds = [];
     _client.authenticate().then((_) {
       return _clientComp.complete(_client);
     }).then((_) {
@@ -52,7 +55,6 @@ class ZabbixNode extends SimpleNode {
     }).then((result) {
       var hostList = result['result'] as List;
       var hostNode = provider.getOrCreateNode('$path/Hosts');
-      var hostIds = [];
       for (Map host in hostList) {
         var name = NodeNamer.createName(host['hostid']);
         provider.addNode('${hostNode.path}/$name', ZabbixHost.definition(host));
@@ -63,12 +65,27 @@ class ZabbixNode extends SimpleNode {
       for (Map tmp in result['result']) {
         var host = ZabbixHost.getById(tmp['hostid']);
         if (host == null) {
-          print("Error! Can't get node: ${tmp['hostid']}");
-          return;
+          logger.warning("Can't get node: ${tmp['hostid']}");
+          return null;
         }
         var path = provider.getOrCreateNode('${host.path}/items');
         var name = NodeNamer.createName(tmp['itemid']);
         provider.addNode('${path.path}/$name', ZabbixItem.definition(tmp));
+      }
+      return _client.makeRequest(RequestMethod.alertGet, {'hostids': hostIds});
+    }).then((Map result) {
+      print(result);
+      if (result == null) return;
+      if (result.containsKey('error')) {
+        logger.warning('Error retreiving alerts: ${result['error']}');
+        return;
+      }
+      if (result['result'] != null && result['result'].isNotEmpty) {
+        var alertNd = provider.getOrCreateNode('$path/alerts');
+        for (Map tmp in result['result']) {
+          provider.addNode('${alertNd.path}/${tmp['alertid']}',
+              ZabbixAlert.definition(tmp));
+        }
       }
     });
   }

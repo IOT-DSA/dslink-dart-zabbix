@@ -8,13 +8,15 @@ import 'dart:io';
 import 'package:dslink/utils.dart' show logger;
 
 abstract class RequestMethod {
+  static const String alertGet = 'alert.get';
+
   static const String hostGet = 'host.get';
   static const String hostUpdate = 'host.update';
 
-  static const String userLogin = 'user.login';
-
   static const String itemGet = 'item.get';
   static const String itemUpdate = 'item.update';
+
+  static const String userLogin = 'user.login';
 }
 
 
