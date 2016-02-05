@@ -42,6 +42,8 @@ class ZabbixHost extends ZabbixChild {
       'flags' : ZabbixValue.definition('Flags', 'string',
                 (host['flags'] == 0 ? 'Plain host' : 'Discovered host'), false),
       'IPMI' : {
+        r'$type' : 'string',
+        r'?value' : ipmiAvailable,
         'ipmi_authtype' : ZabbixValue.definition('IPMI Authentication',
             'enum[$authTypeEnum]', ipmiAuth, true),
         'ipmi_available' : ZabbixValue.definition('IPMI Agent Available', 'string',
@@ -59,6 +61,8 @@ class ZabbixHost extends ZabbixChild {
             host['ipmi_username'], true)
       },
       'JMX' : {
+        r'$type' : 'string',
+        r'?value' : jmxAvailable,
         'jmx_available' : ZabbixValue.definition('JMX Available', 'string',
             jmxAvailable, false),
         'jmx_disable_until' : ZabbixValue.definition('JMX Disable Until', 'string',
@@ -85,6 +89,8 @@ class ZabbixHost extends ZabbixChild {
       'proxy_hostid' : ZabbixValue.definition('Proxy Host ID', 'string',
             host['proxy_hostid'], true),
       'SNMP' : {
+        r'$type' : 'string',
+        r'?value' : snmpAvailable,
         'snmp_available' : ZabbixValue.definition('SNMP Available', 'string',
             snmpAvailable, false),
         'snmp_disable_until' : ZabbixValue.definition('SNMP Disable Until',

@@ -94,6 +94,8 @@ class ZabbixItem extends ZabbixChild {
       'publickey' : ZabbixValue.definition('Public Key filename', 'string',
           item['publickey'], true),
       'snmp' : {
+        r'$type' : 'string',
+        r'?value' : '',
         'snmp_community' : ZabbixValue.definition('SNMP Community', 'string',
             item['snmp_community'], true),
         'snmp_oid' : ZabbixValue.definition('OID', 'string', item['snmp_oid'], true),
