@@ -107,5 +107,7 @@ class DeleteHostGroup extends SimpleNode {
       ret['message'] = 'Success';
       provider.removeNode(parent.path);
     }
+
+    return ret;
   }
 }

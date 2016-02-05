@@ -23,6 +23,9 @@ class ZabbixNode extends SimpleNode {
     r'$$zb_user' : params['username'],
     r'$$zb_pass' : params['password'],
     r'$$zb_refresh' : params['refreshRate'],
+    'HostGroups' : {
+      CreateHostGroup.pathName : CreateHostGroup.definition()
+    },
     EditConnection.pathName : EditConnection.definition(params),
     RemoveConnection.pathName : RemoveConnection.definition()
   };
@@ -74,14 +77,6 @@ class ZabbixNode extends SimpleNode {
           }
         }
       }
-
-//      var hostList = result['result'] as List;
-//      var hostNode = provider.getOrCreateNode('$path/Hosts');
-//      for (Map host in hostList) {
-//        var name = NodeNamer.createName(host['hostid']);
-//        provider.addNode('${hostNode.path}/$name', ZabbixHost.definition(host));
-//        hostIds.add(host['hostid']);
-//      }
       return _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds});
     }).then((result) {
       if (result == null) return null;
