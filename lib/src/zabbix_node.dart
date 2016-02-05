@@ -12,6 +12,7 @@ import 'connection_edit.dart';
 import 'connection_remove.dart';
 import 'zabbix_alert.dart';
 import 'zabbix_host.dart';
+import 'zabbix_hostgroup.dart';
 import 'zabbix_item.dart';
 
 class ZabbixNode extends SimpleNode {
@@ -51,17 +52,43 @@ class ZabbixNode extends SimpleNode {
     _client.authenticate().then((_) {
       return _clientComp.complete(_client);
     }).then((_) {
-      return _client.makeRequest(RequestMethod.hostGet, null);
+      var params = {'selectHosts' : 'extend'};
+      return _client.makeRequest(RequestMethod.hostgroupGet, params);
     }).then((result) {
-      var hostList = result['result'] as List;
-      var hostNode = provider.getOrCreateNode('$path/Hosts');
-      for (Map host in hostList) {
-        var name = NodeNamer.createName(host['hostid']);
-        provider.addNode('${hostNode.path}/$name', ZabbixHost.definition(host));
-        hostIds.add(host['hostid']);
+      if (result.containsKey('error')) {
+        logger.warning('Error polling hostgroups: ${result['error']}');
+        return null;
       }
+      var groupList = result['result'] as List;
+      var hgPath = provider.getOrCreateNode('$path/HostGroups');
+      for (Map gp in groupList) {
+        var name = gp['groupid'];
+        var hgNode = provider.addNode('${hgPath.path}/$name',
+            ZabbixHostGroup.definition(gp));
+        if (gp['hosts'] != null && gp['hosts'].isNotEmpty) {
+          for (Map host in gp['hosts']) {
+            var hName = host['hostid'];
+            provider.addNode('${hgNode.path}/$hName',
+                ZabbixHost.definition(host));
+            hostIds.add(hName);
+          }
+        }
+      }
+
+//      var hostList = result['result'] as List;
+//      var hostNode = provider.getOrCreateNode('$path/Hosts');
+//      for (Map host in hostList) {
+//        var name = NodeNamer.createName(host['hostid']);
+//        provider.addNode('${hostNode.path}/$name', ZabbixHost.definition(host));
+//        hostIds.add(host['hostid']);
+//      }
       return _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds});
     }).then((result) {
+      if (result == null) return null;
+      if (result.containsKey('error')) {
+        logger.warning('Error polling items: ${result['error']}');
+        return null;
+      }
       for (Map tmp in result['result']) {
         var host = ZabbixHost.getById(tmp['hostid']);
         if (host == null) {
@@ -74,10 +101,10 @@ class ZabbixNode extends SimpleNode {
       }
       return _client.makeRequest(RequestMethod.alertGet, null);
     }).then((Map result) {
-      if (result == null) return;
+      if (result == null) return null;
       if (result.containsKey('error')) {
         logger.warning('Error retreiving alerts: ${result['error']}');
-        return;
+        return null;
       }
       if (result['result'] != null && result['result'].isNotEmpty) {
         var alertNd = provider.getOrCreateNode('$path/alerts');

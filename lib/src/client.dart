@@ -13,6 +13,9 @@ abstract class RequestMethod {
   static const String hostGet = 'host.get';
   static const String hostUpdate = 'host.update';
 
+  static const String hostgroupGet = 'hostgroup.get';
+  static const String hostgroupUpdate = 'hostgroup.update';
+
   static const String itemGet = 'item.get';
   static const String itemUpdate = 'item.update';
 
