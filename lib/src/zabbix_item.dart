@@ -131,7 +131,6 @@ class ZabbixItem extends ZabbixChild {
 
   ZabbixItem(String path) : super(path);
 
-//TODO
   bool updateChild(String path, String valueName, newValue, oldValue) {
     var itemid = name;
     var sendVal;

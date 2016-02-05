@@ -1,24 +1,31 @@
 library dslink.zabbix.nodes.zabbix_host;
 
+import 'dart:async';
 import 'dart:collection';
 
+import 'package:dslink/utils.dart' show logger;
+
+import 'client.dart';
 import 'common.dart';
 
 class ZabbixHost extends ZabbixChild {
   static final String isType = 'zabbixHostNode';
+  static const availTypes = const ['Unknown', 'Available', 'Unavailable'];
+  static const ipmiAuthTypes = const ['default', 'none', 'MD2', 'MD5', '',
+    'straight', 'OEM', 'RMCP+'];
+  static const ipmiPrivs = const ['callback', 'user', 'operator', 'admin', 'OEM'];
+  static const statuses = const ['Monitored', 'Unmonitored'];
+
   static Map<String, dynamic> definition(Map host) {
-    final availTypes = ['Unknown', 'Available', 'Unavailable'];
     var available = availTypes[int.parse(host['available'])];
     var ipmiAvailable = availTypes[int.parse(host['ipmi_available'])];
     var jmxAvailable = availTypes[int.parse(host['jmx_available'])];
     var snmpAvailable = availTypes[int.parse(host['snmp_available'])];
 
-    final ipmiAuthTypes = ['default', 'none', 'MD2', 'MD5', '',
-                        'straight', 'OEM', 'RMCP+'];
     var ipmiAuth = ipmiAuthTypes[int.parse(host['ipmi_authtype']) + 1];
-
-    final ipmiPrivs = ['callback', 'user', 'operator', 'admin', 'OEM'];
     var ipmiPriv = ipmiPrivs[int.parse(host['ipmi_privilege']) - 1];
+
+    var authTypeEnum = ipmiAuthTypes.where((String el) => el.isNotEmpty).join(',');
 
     return {
       r'$is' : isType,
@@ -36,8 +43,7 @@ class ZabbixHost extends ZabbixChild {
                 (host['flags'] == 0 ? 'Plain host' : 'Discovered host'), false),
       'IPMI' : {
         'ipmi_authtype' : ZabbixValue.definition('IPMI Authentication',
-            'enum[default,none,MD2,MD5,straight,OEM,RMCP+]',
-            ipmiAuth, true),
+            'enum[$authTypeEnum]', ipmiAuth, true),
         'ipmi_available' : ZabbixValue.definition('IPMI Agent Available', 'string',
             ipmiAvailable, false),
         'ipmi_disable_until' : ZabbixValue.definition('IPMI Disable Until', 'string',
@@ -88,8 +94,8 @@ class ZabbixHost extends ZabbixChild {
         'snmp_errors_from' : ZabbixValue.definition('SNMP Errors From', 'string',
             host['snmp_errors_from'], false)
       },
-      'status' : ZabbixValue.definition('Status', 'enum[Monitored,Unmonitored]',
-          (host['status'] == 0 ? 'Monitored' : 'Unmonitored'), true)
+      'status' : ZabbixValue.definition('Status', 'enum[${statuses.join(',')}]',
+          statuses[int.parse(host['status'])], true)
     };
   }
 
@@ -106,8 +112,39 @@ class ZabbixHost extends ZabbixChild {
 
   //TODO
   bool updateChild(String path, String valueName, newValue, oldValue) {
-    print('Update request for: $path');
-    print('$name: $value');
-    return true;
+    var hostid = name;
+    var sendVal;
+
+    switch (valueName) {
+      case 'ipmi_authtype':
+        sendVal = ipmiAuthTypes.indexOf(newValue) - 1;
+        break;
+      case 'ipmi_privlege':
+        sendVal = ipmiPrivs.indexOf(newValue) + 1;
+        break;
+      case 'status':
+        sendVal = statuses.indexOf(newValue);
+        break;
+      default:
+        sendVal = newValue;
+        break;
+    }
+
+    var params = {
+      'hostid' : hostid,
+      valueName : sendVal
+    };
+
+    _updateValue(path, params, oldValue);
+    return false;
+  }
+
+  Future _updateValue(String path, Map params, oldValue) async {
+    var cl = await client;
+    var res = await cl.makeRequest(RequestMethod.hostUpdate, params);
+    if (res.containsKey('error')) {
+      logger.warning('Error updating: "$params" Server error: ${res['error']}');
+      provider.updateValue(path, oldValue);
+    }
   }
 }
