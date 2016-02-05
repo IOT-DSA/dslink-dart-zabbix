@@ -17,6 +17,7 @@ Future main(List<String> args) async {
         EditConnection.isType : (String path) => new EditConnection(path),
         ZabbixHostGroup.isType : (String path) => new ZabbixHostGroup(path),
         RenameHostGroup.isType : (String path) => new RenameHostGroup(path),
+        DeleteHostGroup.isType : (String path) => new DeleteHostGroup(path),
         ZabbixHost.isType : (String path) => new ZabbixHost(path),
         ZabbixValue.isType : (String path) => new ZabbixValue(path),
         ZabbixItem.isType : (String path) => new ZabbixItem(path),

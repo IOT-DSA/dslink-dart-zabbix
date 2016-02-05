@@ -66,3 +66,46 @@ class RenameHostGroup extends SimpleNode {
     return ret;
   }
 }
+
+class DeleteHostGroup extends SimpleNode {
+  static const String isType = 'zabbixDeleteHostgroup';
+  static const String pathName = 'Delete_Hostgroup';
+  static Map<String, dynamic> definition() => {
+    r'$is' : isType,
+    r'$name' : 'Delete Hostgroup',
+    r'$invokable' : 'write',
+    r'$params' : [],
+    r'$columns' : [
+      {
+        'name' : 'success',
+        'type' : 'bool',
+        'default' : false
+      },
+      {
+        'name' : 'message',
+        'type' : 'string',
+        'default': ''
+      }
+    ]
+  };
+
+  DeleteHostGroup(String path) : super(path);
+
+  @override
+  Future<Map<String, dynamic>> onInvoke(Map<String, dynamic> params) async {
+    var ret = { 'success' : false, 'message' : '' };
+
+    var client = await (parent as ZabbixChild).client;
+    var args = [parent.name];
+
+    var result = await client.makeRequest(RequestMethod.hostgroupDelete, args);
+    if (result.containsKey('error')) {
+      logger.warning('Error deleting Hostgroup: ${result['error']}');
+      ret['message'] = result['error']['data'];
+    } else {
+      ret['success'] = true;
+      ret['message'] = 'Success';
+      provider.removeNode(parent.path);
+    }
+  }
+}

@@ -15,6 +15,7 @@ abstract class RequestMethod {
 
   static const String hostgroupGet = 'hostgroup.get';
   static const String hostgroupUpdate = 'hostgroup.update';
+  static const String hostgroupDelete = 'hostgroup.delete';
 
   static const String itemGet = 'item.get';
   static const String itemUpdate = 'item.update';
@@ -109,10 +110,10 @@ class ZabbixClient {
     return ret;
   }
 
-  Future<Map> makeRequest(String requestMethod, Map params) {
+  Future<Map> makeRequest(String requestMethod, dynamic params) {
     if (params == null) {
       params = {'output' : 'extend'};
-    } else {
+    } else if(params is Map) {
       params['output'] ??= 'extend';
     }
     var pr = new PendingRequest(requestMethod, params, ++_requestId);
@@ -210,7 +211,7 @@ class ZabbixClient {
 class PendingRequest {
   int id;
   String method;
-  Map params;
+  dynamic params;
   bool isAuthentication = false;
 
   Completer<Map> _completer;

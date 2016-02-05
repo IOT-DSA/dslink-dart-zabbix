@@ -10,13 +10,17 @@ class ZabbixHostGroup extends ZabbixChild {
     var flags = (hostgroup['flags'] == 0 ? 'plain' : 'discovered');
     bool internal = hostgroup['internal'] == "1";
 
-    return {
+    var ret = {
       r'$is' : isType,
       r'$name' : hostgroup['name'],
       'flags' : ZabbixValue.definition('Flags', 'string', flags, false),
       'internal' : ZabbixValue.definition('Internal', 'bool', internal, false),
       RenameHostGroup.pathName : RenameHostGroup.definition(hostgroup['name'])
     };
+    if (!internal) {
+      ret[DeleteHostGroup.pathName] = DeleteHostGroup.definition();
+    }
+    return ret;
   }
 
   ZabbixHostGroup(String path) : super(path);
