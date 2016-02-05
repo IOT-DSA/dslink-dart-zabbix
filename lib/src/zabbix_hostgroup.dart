@@ -1,6 +1,7 @@
 library dslink.zabbix.nodes.zabbix_hostgroup;
 
 import 'common.dart';
+import 'zabbix_hostgroup_commands.dart';
 
 class ZabbixHostGroup extends ZabbixChild {
   static const String isType = 'zabbixHostgroupNode';
@@ -13,7 +14,8 @@ class ZabbixHostGroup extends ZabbixChild {
       r'$is' : isType,
       r'$name' : hostgroup['name'],
       'flags' : ZabbixValue.definition('Flags', 'string', flags, false),
-      'internal' : ZabbixValue.definition('Internal', 'bool', internal, false)
+      'internal' : ZabbixValue.definition('Internal', 'bool', internal, false),
+      RenameHostGroup.pathName : RenameHostGroup.definition(hostgroup['name'])
     };
   }
 
