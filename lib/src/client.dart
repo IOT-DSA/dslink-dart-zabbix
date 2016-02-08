@@ -10,6 +10,8 @@ import 'package:dslink/utils.dart' show logger;
 abstract class RequestMethod {
   static const String alertGet = 'alert.get';
 
+  static const String eventAcknowledge = 'event.acknowledge';
+
   static const String hostGet = 'host.get';
   static const String hostUpdate = 'host.update';
 

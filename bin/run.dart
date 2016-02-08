@@ -22,7 +22,9 @@ Future main(List<String> args) async {
         ZabbixHost.isType : (String path) => new ZabbixHost(path),
         ZabbixValue.isType : (String path) => new ZabbixValue(path),
         ZabbixItem.isType : (String path) => new ZabbixItem(path),
-        ZabbixAlert.isType : (String path) => new ZabbixAlert(path)
+        ZabbixAlert.isType : (String path) => new ZabbixAlert(path),
+        ZabbixEvent.isType : (String path) => new ZabbixEvent(path),
+        AcknowledgeEvent.isType : (String path) => new AcknowledgeEvent(path)
       }, autoInitialize: false);
 
   link.init();
