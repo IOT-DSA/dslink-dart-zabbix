@@ -52,13 +52,17 @@ abstract class ZabbixChild extends SimpleNode {
 class ZabbixValue extends ZabbixChild {
   static final String isType = 'zabbixValueNode';
   static Map<String, dynamic> definition(String name, String type,
-                              dynamic value, bool writable) => {
+                              dynamic value, bool writable) {
+    var ret = {
       r'$is' : isType,
       r'$name' : name,
       r'$type' : type,
       r'?value' : value,
-      r'$writable' : (writable ? 'write' : 'never')
-  };
+    };
+
+    if (writable) ret[r'$writable'] = 'write';
+    return ret;
+  }
 
   ZabbixValue(String path) : super(path);
 
