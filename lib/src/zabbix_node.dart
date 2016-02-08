@@ -54,8 +54,7 @@ class ZabbixNode extends SimpleNode {
 
     var hostIds = [];
     _client.authenticate().then((_) {
-      return _clientComp.complete(_client);
-    }).then((_) {
+      _clientComp.complete(_client);
       var params = {'selectHosts' : 'extend'};
       return _client.makeRequest(RequestMethod.hostgroupGet, params);
     }).then((result) {
@@ -78,31 +77,16 @@ class ZabbixNode extends SimpleNode {
           }
         }
       }
-      return _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds});
-    }).then((result) {
-      if (result == null) return null;
-      if (result.containsKey('error')) {
-        logger.warning('Error polling items: ${result['error']}');
-        return null;
-      }
-      for (Map tmp in result['result']) {
-        var host = ZabbixHost.getById(tmp['hostid']);
-        if (host == null) {
-          logger.warning("Can't get node: ${tmp['hostid']}");
-          return null;
-        }
-        var path = provider.getOrCreateNode('${host.path}/items');
-        var name = NodeNamer.createName(tmp['itemid']);
-        provider.addNode('${path.path}/$name', ZabbixItem.definition(tmp));
-      }
 
       var args = {
         'select_acknowledges' : 'extend',
         'hostids' : hostIds,
         'selectHosts' : 'hostid'
       };
-      _client.makeRequest(RequestMethod.eventGet, args).then(_populatEvents);
+      _client.makeRequest(RequestMethod.eventGet, args).then(_populateEvents);
       _client.makeRequest(RequestMethod.alertGet, null).then(_populateAlerts);
+      _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
+        .then(_populateItems);
     });
   }
 
@@ -150,7 +134,7 @@ class ZabbixNode extends SimpleNode {
     }
   }
 
-  void _populatEvents(Map result) {
+  void _populateEvents(Map result) {
     if (result.containsKey('error')) {
       logger.warning('Error retreiving events: ${result['error']}');
       return null;
@@ -166,6 +150,23 @@ class ZabbixNode extends SimpleNode {
           logger.fine('No associated host. $evnt');
         }
       }
+    }
+  }
+
+  void _populateItems(Map result) {
+    if (result.containsKey('error')) {
+      logger.warning('Error polling items: ${result['error']}');
+      return null;
+    }
+    for (Map tmp in result['result']) {
+      var host = ZabbixHost.getById(tmp['hostid']);
+      if (host == null) {
+        logger.warning("Can't get node: ${tmp['hostid']}");
+        continue;
+      }
+      var path = provider.getOrCreateNode('${host.path}/Items');
+      var name = NodeNamer.createName(tmp['itemid']);
+      provider.addNode('${path.path}/$name', ZabbixItem.definition(tmp));
     }
   }
 
