@@ -79,12 +79,6 @@ class ZabbixNode extends SimpleNode {
         }
       }
 
-      var eventArgs = {
-        'select_acknowledges' : 'extend',
-        'hostids' : hostIds,
-        'selectHosts' : 'hostid'
-      };
-
       var trigArgs = {
         'hostids' : hostIds,
         'expandComment' :  true,
@@ -93,8 +87,6 @@ class ZabbixNode extends SimpleNode {
         'selectHosts' : 'hostid',
         'selectFunctions' : 'expand'
       };
-      _client.makeRequest(RequestMethod.eventGet, eventArgs).then(_populateEvents);
-      _client.makeRequest(RequestMethod.alertGet, null).then(_populateAlerts);
       _client.makeRequest('trigger.get', trigArgs).then(_populateTriggers);
       _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
         .then(_populateItems);
@@ -137,29 +129,11 @@ class ZabbixNode extends SimpleNode {
       return;
     }
     if (result['result'] != null && result['result'].isNotEmpty) {
-      var alertNd = provider.getOrCreateNode('$path/alerts');
       for (Map tmp in result['result']) {
+        var evnt = ZabbixEvent.getById(tmp['eventid']);
+        var alertNd = provider.getOrCreateNode('${evnt.path}/Alerts');
         provider.addNode('${alertNd.path}/${tmp['alertid']}',
             ZabbixAlert.definition(tmp));
-      }
-    }
-  }
-
-  void _populateEvents(Map result) {
-    if (result.containsKey('error')) {
-      logger.warning('Error retreiving events: ${result['error']}');
-      return;
-    }
-    if (result['result'] != null && result['result'].isNotEmpty) {
-      for (Map evnt in result['result']) {
-        var host = ZabbixHost.getById(evnt['hosts'][0]['hostid']);
-        if (host != null) {
-          var evntNode = provider.getOrCreateNode('${host.path}/Events');
-          provider.addNode('${evntNode.path}/${evnt['eventid']}',
-              ZabbixEvent.definition(evnt));
-        } else {
-          logger.fine('No associated host. $evnt');
-        }
       }
     }
   }
@@ -195,6 +169,37 @@ class ZabbixNode extends SimpleNode {
       var trigNd = provider.getOrCreateNode('${host.path}/Triggers');
       provider.addNode('${trigNd.path}/${trig['triggerid']}',
           ZabbixTrigger.definition(trig));
+
+    }
+
+    var eventArgs = {
+      'select_acknowledges' : 'extend',
+      'selectHosts' : 'hostid'
+    };
+
+    _client.makeRequest(RequestMethod.alertGet, null).then(_populateAlerts);
+    _client.makeRequest(RequestMethod.eventGet, eventArgs).then(_populateEvents);
+  }
+
+  void _populateEvents(Map result) {
+    if (result.containsKey('error')) {
+      logger.warning('Error retreiving events: ${result['error']}');
+      return;
+    }
+
+    if (result['result'] != null && result['result'].isNotEmpty) {
+      for (Map evnt in result['result']) {
+        if (evnt['object'] != '0') continue;
+
+        var trig = ZabbixTrigger.getById(evnt['objectid']);
+        if (trig != null) {
+          var evntNode = provider.getOrCreateNode('${trig.path}/Events');
+          provider.addNode('${evntNode.path}/${evnt['eventid']}',
+              ZabbixEvent.definition(evnt));
+        } else {
+          logger.fine('No associated host. $evnt');
+        }
+      }
     }
   }
 

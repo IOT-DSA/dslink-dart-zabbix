@@ -1,6 +1,7 @@
 library dslink.zabbix.nodes.zabbix_event;
 
 import 'dart:async';
+import 'dart:collection' show HashMap;
 
 import 'package:dslink/dslink.dart';
 import 'package:dslink/utils.dart';
@@ -10,6 +11,12 @@ import 'common.dart';
 
 class ZabbixEvent extends ZabbixChild {
   static const String isType = 'zabbixEventNode';
+
+  static final HashMap<String, ZabbixEvent> _cache =
+      new HashMap<String, ZabbixEvent>();
+
+  static ZabbixEvent getById(String id) => _cache[id];
+
   static Map<String, dynamic> definition(Map event) {
     final sources = ['trigger', 'discovery rule', 'auto-registration', 'internal'];
     var source = sources[int.parse(event['source'])];
@@ -88,6 +95,12 @@ class ZabbixEvent extends ZabbixChild {
   }
 
   ZabbixEvent(String path) : super(path);
+
+  @override
+  void onCreated() {
+    _cache.putIfAbsent(name, () => this);
+  }
+
   bool updateChild(String path, String valueName, newValue, oldValue) => true;
 }
 

@@ -1,14 +1,21 @@
 library dslink.zabbix.nodes.zabbix_triggers;
 
+import 'dart:collection' show HashMap;
+
 import 'common.dart';
 
 class ZabbixTrigger extends ZabbixChild {
+  static final HashMap<String, ZabbixTrigger> _cache =
+      new HashMap<String, ZabbixTrigger>();
+
   static const String isType = 'zabbixTriggerNode';
 
   static const _priorities = const ['not classified', 'information', 'warning',
     'average', 'high', 'disaster'];
   static const _statuses = const ['enabled', 'disabled'];
   static const _types = const ['single event', 'multple events'];
+
+  static ZabbixTrigger getById(String id) => _cache[id];
 
   static Map<String, dynamic> definition(Map trigger) {
     final flags = { '0' : 'plain', '4' : 'discovered' };
@@ -59,6 +66,11 @@ class ZabbixTrigger extends ZabbixChild {
   }
 
   ZabbixTrigger(String path) : super(path);
+
+  @override
+  void onCreated() {
+    _cache.putIfAbsent(name, () => this);
+  }
 
   bool updateChild(String path, String valueName, newValue, oldValue) {
     // TODO: Complete this.

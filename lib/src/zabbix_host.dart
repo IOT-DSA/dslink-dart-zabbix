@@ -107,6 +107,7 @@ class ZabbixHost extends ZabbixChild {
 
   static HashMap<String, ZabbixHost> _cache = new HashMap<String, ZabbixHost>();
   static ZabbixHost getById(String hostId) => _cache[hostId];
+  static List<String> getAllIds() => _cache.keys.toList(growable: false);
 
   ZabbixHost(String path) : super(path);
 
