@@ -85,6 +85,7 @@ class AddConnection extends SimpleNode {
       var name = NodeNamer.createName(params['name'].trim());
       _link.addNode('/$name', ZabbixNode.definition(params));
       ret['message'] = 'Success!';
+      _link.save();
     } else {
       ret['message'] = res['error'];
     }
