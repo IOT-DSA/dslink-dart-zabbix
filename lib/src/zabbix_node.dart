@@ -11,6 +11,7 @@ import 'common.dart';
 import 'connection_edit.dart';
 import 'connection_remove.dart';
 import 'zabbix_alert.dart';
+import 'zabbix_event.dart';
 import 'zabbix_host.dart';
 import 'zabbix_hostgroup.dart';
 import 'zabbix_item.dart';
@@ -94,20 +95,14 @@ class ZabbixNode extends SimpleNode {
         var name = NodeNamer.createName(tmp['itemid']);
         provider.addNode('${path.path}/$name', ZabbixItem.definition(tmp));
       }
-      return _client.makeRequest(RequestMethod.alertGet, null);
-    }).then((Map result) {
-      if (result == null) return null;
-      if (result.containsKey('error')) {
-        logger.warning('Error retreiving alerts: ${result['error']}');
-        return null;
-      }
-      if (result['result'] != null && result['result'].isNotEmpty) {
-        var alertNd = provider.getOrCreateNode('$path/alerts');
-        for (Map tmp in result['result']) {
-          provider.addNode('${alertNd.path}/${tmp['alertid']}',
-              ZabbixAlert.definition(tmp));
-        }
-      }
+
+      var args = {
+        'select_acknowledges' : 'extend',
+        'hostids' : hostIds,
+        'selectHosts' : 'hostid'
+      };
+      _client.makeRequest(RequestMethod.eventGet, args).then(_populatEvents);
+      _client.makeRequest(RequestMethod.alertGet, null).then(_populateAlerts);
     });
   }
 
@@ -139,5 +134,39 @@ class ZabbixNode extends SimpleNode {
     // TODO: Add implementation for Subscriptions/Timers
   }
 
-  void updateChild(String path, String name, value) {}
+  bool updateChild(String path, String name, newValue, oldValue) => true;
+
+  void _populateAlerts(Map result) {
+    if (result.containsKey('error')) {
+      logger.warning('Error retreiving alerts: ${result['error']}');
+      return null;
+    }
+    if (result['result'] != null && result['result'].isNotEmpty) {
+      var alertNd = provider.getOrCreateNode('$path/alerts');
+      for (Map tmp in result['result']) {
+        provider.addNode('${alertNd.path}/${tmp['alertid']}',
+            ZabbixAlert.definition(tmp));
+      }
+    }
+  }
+
+  void _populatEvents(Map result) {
+    if (result.containsKey('error')) {
+      logger.warning('Error retreiving events: ${result['error']}');
+      return null;
+    }
+    if (result['result'] != null && result['result'].isNotEmpty) {
+      for (Map evnt in result['result']) {
+        var host = ZabbixHost.getById(evnt['hosts'][0]['hostid']);
+        if (host != null) {
+          var evntNode = provider.getOrCreateNode('${host.path}/Events');
+          provider.addNode('${evntNode.path}/${evnt['eventid']}',
+              ZabbixEvent.definition(evnt));
+        } else {
+          logger.fine('No associated host. $evnt');
+        }
+      }
+    }
+  }
+
 }
