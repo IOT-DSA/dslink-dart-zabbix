@@ -112,7 +112,7 @@ class ZabbixHost extends ZabbixChild {
 
   @override
   void onCreated() {
-    var hostId = provider.getNode('$path/hostId').value;
+    var hostId = name;
     _cache.putIfAbsent(hostId, () => this);
   }
 
