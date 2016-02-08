@@ -24,6 +24,7 @@ Future main(List<String> args) async {
         ZabbixItem.isType : (String path) => new ZabbixItem(path),
         ZabbixAlert.isType : (String path) => new ZabbixAlert(path),
         ZabbixEvent.isType : (String path) => new ZabbixEvent(path),
+        ZabbixTrigger.isType : (String path) => new ZabbixTrigger(path),
         AcknowledgeEvent.isType : (String path) => new AcknowledgeEvent(path)
       }, autoInitialize: false);
 

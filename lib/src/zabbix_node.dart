@@ -15,6 +15,7 @@ import 'zabbix_event.dart';
 import 'zabbix_host.dart';
 import 'zabbix_hostgroup.dart';
 import 'zabbix_item.dart';
+import 'zabbix_triggers.dart';
 
 class ZabbixNode extends SimpleNode {
   static const String isType = 'zabbixNode';
@@ -78,13 +79,23 @@ class ZabbixNode extends SimpleNode {
         }
       }
 
-      var args = {
+      var eventArgs = {
         'select_acknowledges' : 'extend',
         'hostids' : hostIds,
         'selectHosts' : 'hostid'
       };
-      _client.makeRequest(RequestMethod.eventGet, args).then(_populateEvents);
+
+      var trigArgs = {
+        'hostids' : hostIds,
+        'expandComment' :  true,
+        'expandDescription' : true,
+        'expandExpression' : true,
+        'selectHosts' : 'hostid',
+        'selectFunctions' : 'expand'
+      };
+      _client.makeRequest(RequestMethod.eventGet, eventArgs).then(_populateEvents);
       _client.makeRequest(RequestMethod.alertGet, null).then(_populateAlerts);
+      _client.makeRequest('trigger.get', trigArgs).then(_populateTriggers);
       _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
         .then(_populateItems);
     });
@@ -123,7 +134,7 @@ class ZabbixNode extends SimpleNode {
   void _populateAlerts(Map result) {
     if (result.containsKey('error')) {
       logger.warning('Error retreiving alerts: ${result['error']}');
-      return null;
+      return;
     }
     if (result['result'] != null && result['result'].isNotEmpty) {
       var alertNd = provider.getOrCreateNode('$path/alerts');
@@ -137,7 +148,7 @@ class ZabbixNode extends SimpleNode {
   void _populateEvents(Map result) {
     if (result.containsKey('error')) {
       logger.warning('Error retreiving events: ${result['error']}');
-      return null;
+      return;
     }
     if (result['result'] != null && result['result'].isNotEmpty) {
       for (Map evnt in result['result']) {
@@ -156,7 +167,7 @@ class ZabbixNode extends SimpleNode {
   void _populateItems(Map result) {
     if (result.containsKey('error')) {
       logger.warning('Error polling items: ${result['error']}');
-      return null;
+      return;
     }
     for (Map tmp in result['result']) {
       var host = ZabbixHost.getById(tmp['hostid']);
@@ -167,6 +178,23 @@ class ZabbixNode extends SimpleNode {
       var path = provider.getOrCreateNode('${host.path}/Items');
       var name = NodeNamer.createName(tmp['itemid']);
       provider.addNode('${path.path}/$name', ZabbixItem.definition(tmp));
+    }
+  }
+
+  void _populateTriggers(Map result) {
+    if (result.containsKey('error')) {
+      logger.warning('Error polling Triggers: ${result['error']}');
+      return;
+    }
+    for (var trig in result['result']) {
+      var host = ZabbixHost.getById(trig['hosts'][0]['hostid']);
+      if (host == null) {
+        logger.fine('Unable to find host for: $trig');
+        continue;
+      }
+      var trigNd = provider.getOrCreateNode('${host.path}/Triggers');
+      provider.addNode('${trigNd.path}/${trig['triggerid']}',
+          ZabbixTrigger.definition(trig));
     }
   }
 
