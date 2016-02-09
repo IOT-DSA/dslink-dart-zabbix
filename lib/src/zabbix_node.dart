@@ -35,7 +35,7 @@ class ZabbixNode extends SimpleNode {
 
   ZabbixNode(String path, this._link) : super(path) {
     _clientComp = new Completer<ZabbixClient>();
-    _subscriptions = new HashMap();
+    _subscriptions = new HashMap<String, HashMap<String, Set>>();
   }
 
   Future<ZabbixClient> get client => _clientComp.future;
@@ -45,7 +45,7 @@ class ZabbixNode extends SimpleNode {
   int _refreshRate;
   Completer<ZabbixClient> _clientComp;
   LinkProvider _link;
-  HashMap<String, Set> _subscriptions;
+  HashMap<String, HashMap<String, Set>> _subscriptions;
   Timer _refreshTimer;
 
   @override
@@ -124,17 +124,29 @@ class ZabbixNode extends SimpleNode {
     _link.save();
   }
 
-  void addSubscription(String parId, String type) {
+  void addSubscription(String parId, String type, String valueName) {
     // TODO: Add implementation for Subscriptions/Timers
     print('Subscription for: ${parId} which is: $type');
 
-    Set set = _subscriptions.putIfAbsent(type, () => new Set());
-    set.add(parId);
+    HashMap typeMap = _subscriptions.putIfAbsent(type, () => new HashMap<String, Set>());
+    Set items = typeMap.putIfAbsent(parId, () => new Set());
+    items.add(valueName);
   }
 
-  void removeSubscription(String parId, String type) {
-    var set = _subscriptions[type];
-    set?.remove(parId);
+  void removeSubscription(String parId, String type, String valueName) {
+    HashMap typeMap = _subscriptions[type];
+    if (typeMap == null) return;
+    Set items = typeMap[parId];
+    if (items == null) return;
+    items.remove(valueName);
+
+    if (items.isEmpty) {
+      typeMap.remove(parId);
+    }
+
+    if (typeMap.keys.isEmpty) {
+      _subscriptions.remove(type);
+    }
   }
 
   bool updateChild(String path, String name, newValue, oldValue) => true;
@@ -223,7 +235,7 @@ class ZabbixNode extends SimpleNode {
     print('Calling refresh callback');
     print('Subscriptions: $_subscriptions');
     for (var reqType in _subscriptions.keys) {
-      var ids = _subscriptions[reqType].toList(growable: false);
+      var ids = _subscriptions[reqType].keys.toList(growable: false);
       if (ids.isEmpty) continue;
       var args = {};
 

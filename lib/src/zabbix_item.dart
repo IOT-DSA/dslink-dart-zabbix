@@ -30,6 +30,7 @@ class ZabbixItem extends ZabbixChild {
   static const flags = const { '0': 'Plain Item', '1' : 'Discovered Item' };
 
   static Map<String, dynamic> definition(Map item) {
+    var lastClock = new DateTime.fromMillisecondsSinceEpoch(int.parse(item['lastclock']) * 1000);
     var itmType = itemTypes[int.parse(item['type'])];
     var valType = valueTypes[int.parse(item['value_type'])];
     var dataType = dataTypes[int.parse(item['data_type'])];
@@ -73,8 +74,8 @@ class ZabbixItem extends ZabbixChild {
           int.parse(item['inventory_link']), true),
       'ipmi_sensor' : ZabbixValue.definition('IPMI Sensor', 'string',
           item['ipmi_sensor'], true),
-      'last_clock' : ZabbixValue.definition('Last updated', 'string',
-          item['last_clock'], false),
+      'lastclock' : ZabbixValue.definition('Last updated', 'string',
+          lastClock.toIso8601String(), false),
       'lastns' : ZabbixValue.definition('Last updated nanoseconds', 'number',
           int.parse(item['lastns']), false),
       'lastvalue' : ZabbixValue.definition('Last Value', 'string',
@@ -200,6 +201,7 @@ class ZabbixItem extends ZabbixChild {
   }
 
   void update(Map updatedValues) {
+    var lastClock = new DateTime.fromMillisecondsSinceEpoch(int.parse(updatedValues['lastclock']) * 1000);
     var flag = flags[updatedValues['flags']];
     var authType = authTypes[int.parse(updatedValues['authtype'])];
     var itmType = itemTypes[int.parse(updatedValues['type'])];
@@ -248,6 +250,9 @@ class ZabbixItem extends ZabbixChild {
           break;
         case 'inventory_link':
           newVal = int.parse(updatedValues['inventory_link']);
+          break;
+        case 'lastclock':
+          newVal = lastClock.toIso8601String();
           break;
         case 'lastns':
           newVal = int.parse(updatedValues['lastns']);

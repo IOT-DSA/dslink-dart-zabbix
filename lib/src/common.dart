@@ -42,28 +42,28 @@ abstract class ZabbixChild extends SimpleNode {
     return _client;
   }
 
-  Future addSubscription(String id, String type) async {
+  Future addSubscription(String id, String type, String valueName) async {
     var rootPar = await rootParent;
-    rootPar.addSubscription(id, type);
+    rootPar.addSubscription(id, type, valueName);
   }
 
-  Future removeSubscription(String id, String type) async {
+  Future removeSubscription(String id, String type, String valueName) async {
     var rootPar = await rootParent;
-    rootPar.removeSubscription(id, type);
+    rootPar.removeSubscription(id, type, valueName);
   }
 
   @override
-  void onSubscribe() {
+  void onSubscribe({String valueName: '_rootVal'}) {
     var id = name;
     var myType = configs[r'$is'];
-    addSubscription(id, myType);
+    addSubscription(id, myType, valueName);
   }
 
   @override
-  void onUnsubscribe() {
+  void onUnsubscribe({String valueName: '_rootVal'}) {
     var id = name;
     var myType = configs[r'$is'];
-    removeSubscription(id, myType);
+    removeSubscription(id, myType, valueName);
   }
 
   bool updateChild(String path, String valueName, newValue, oldValue);
@@ -106,13 +106,13 @@ class ZabbixValue extends ZabbixChild {
 
   // TODO: Overried onSubscribe/onUnsubscribe
   @override
-  void onSubscribe() {
-    parent.onSubscribe();
+  void onSubscribe({String valueName: '_rootVal'}) {
+    (parent as ZabbixChild).onSubscribe(valueName: name);
   }
 
   @override
-  void onUnsubscribe() {
-    parent.onUnsubscribe();
+  void onUnsubscribe({String valueName: '_rootVal'}) {
+    (parent as ZabbixChild).onUnsubscribe(valueName: name);
   }
 
   void update(Map value) {
