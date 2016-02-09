@@ -153,4 +153,8 @@ class ZabbixHost extends ZabbixChild {
       provider.updateValue(path, oldValue);
     }
   }
+
+  void update(Map updatedValues) {
+    // TODO
+  }
 }

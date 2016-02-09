@@ -52,4 +52,8 @@ class ZabbixAlert extends ZabbixChild {
   ZabbixAlert(String path) : super(path);
 
   bool updateChild(String path, String valueName, newValue, oldValue) => true;
+
+  void update(Map updatedValues) {
+    // TODO
+  }
 }

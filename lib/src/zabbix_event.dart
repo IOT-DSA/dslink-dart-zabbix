@@ -102,6 +102,10 @@ class ZabbixEvent extends ZabbixChild {
   }
 
   bool updateChild(String path, String valueName, newValue, oldValue) => true;
+
+  void update(Map updatedValues) {
+    // TODO
+  }
 }
 
 class AcknowledgeEvent extends SimpleNode {

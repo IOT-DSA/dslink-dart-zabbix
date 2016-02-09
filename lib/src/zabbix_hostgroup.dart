@@ -33,6 +33,10 @@ class ZabbixHostGroup extends ZabbixChild {
   ZabbixHostGroup(String path) : super(path);
 
   bool updateChild(String path, String valueName, newValue, oldValue) => true;
+
+  void update(Map updatedValues) {
+    // TODO
+  }
 }
 
 class CreateHostGroup extends SimpleNode {

@@ -24,6 +24,8 @@ abstract class RequestMethod {
   static const String itemGet = 'item.get';
   static const String itemUpdate = 'item.update';
 
+  static const String triggerGet = 'trigger.get';
+
   static const String userLogin = 'user.login';
 }
 
@@ -177,9 +179,11 @@ class ZabbixClient {
     } on HttpException catch(e) {
       logger.warning('Unable to connect to server: $_uri', e);
       preq._completer.completeError(e);
-    } catch (e) {
-      logger.warning('Failed to handle request to: $_uri', e);
+    } catch (e, s) {
+      logger.warning('Failed to handle request to: $_uri', e, s);
+      logger.warning('Body: $body');
       preq._completer.completeError(e);
+      return;
     }
 
     if (allResults['id'] != preq.id) {

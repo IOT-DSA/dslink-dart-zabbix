@@ -14,18 +14,17 @@ class ZabbixTrigger extends ZabbixChild {
     'average', 'high', 'disaster'];
   static const _statuses = const ['enabled', 'disabled'];
   static const _types = const ['single event', 'multple events'];
+  static const _values = const { '0' : 'OK', '1' : 'Problem' };
+  static const _states = const { '0' : 'Up to date', '1' : 'Unknown' };
+  static const _flags = const { '0' : 'plain', '4' : 'discovered' };
+
 
   static ZabbixTrigger getById(String id) => _cache[id];
 
   static Map<String, dynamic> definition(Map trigger) {
-    final flags = { '0' : 'plain', '4' : 'discovered' };
-    var flag = flags[trigger['flags']];
-
-    final states = { '0' : 'Up to date', '1' : 'Unknown' };
-    var state = states[trigger['state']];
-
-    final values = { '0' : 'OK', '1' : 'Problem' };
-    var val = values[trigger['value']];
+    var flag = _flags[trigger['flags']];
+    var state = _states[trigger['state']];
+    var val = _values[trigger['value']];
 
     var lastChange = new DateTime.fromMillisecondsSinceEpoch(int.parse(
         trigger['lastchange']) * 1000);
@@ -75,5 +74,47 @@ class ZabbixTrigger extends ZabbixChild {
   bool updateChild(String path, String valueName, newValue, oldValue) {
     // TODO: Complete this.
     return true;
+  }
+
+  void update(Map updatedValues) {
+    var flag = _flags[updatedValues['flags']];
+    var state = _states[updatedValues['state']];
+    var val = _values[updatedValues['value']];
+    var lastChange = new DateTime.fromMillisecondsSinceEpoch(int.parse(
+        updatedValues['lastchange']) * 1000);
+    var priority = _priorities[int.parse(updatedValues['priority'])];
+    var status = _statuses[int.parse(updatedValues['status'])];
+    var type = _types[int.parse(updatedValues['type'])];
+
+    updateValue(val);
+    for (var key in updatedValues.keys) {
+      var newVal;
+      var nd = provider.getNode('$path/$key');
+      switch (key) {
+        case 'flags':
+          newVal = flag;
+          break;
+        case 'state':
+          newVal = state;
+          break;
+        case 'lastchange':
+          newVal = lastChange.toIso8601String();
+          break;
+        case 'priority':
+          newVal = priority;
+          break;
+        case 'status':
+          newVal = status;
+          break;
+        case 'type':
+          newVal = type;
+          break;
+        default:
+          newVal = updatedValues[key];
+          break;
+      }
+
+      nd?.updateValue(newVal);
+    }
   }
 }

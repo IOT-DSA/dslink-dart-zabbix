@@ -42,11 +42,33 @@ abstract class ZabbixChild extends SimpleNode {
     return _client;
   }
 
-  void addSubscription() {
-    _rootParent.addSubscription(this);
+  Future addSubscription(String id, String type) async {
+    var rootPar = await rootParent;
+    rootPar.addSubscription(id, type);
+  }
+
+  Future removeSubscription(String id, String type) async {
+    var rootPar = await rootParent;
+    rootPar.removeSubscription(id, type);
+  }
+
+  @override
+  void onSubscribe() {
+    var id = name;
+    var myType = configs[r'$is'];
+    addSubscription(id, myType);
+  }
+
+  @override
+  void onUnsubscribe() {
+    var id = name;
+    var myType = configs[r'$is'];
+    removeSubscription(id, myType);
   }
 
   bool updateChild(String path, String valueName, newValue, oldValue);
+
+  void update(Map values);
 }
 
 class ZabbixValue extends ZabbixChild {
@@ -82,5 +104,18 @@ class ZabbixValue extends ZabbixChild {
   @override
   bool onSetValue(Object value) => updateChild(path, name, value, this.value);
 
-// TODO: Overried onSubscribe/onUnsubscribe
+  // TODO: Overried onSubscribe/onUnsubscribe
+  @override
+  void onSubscribe() {
+    parent.onSubscribe();
+  }
+
+  @override
+  void onUnsubscribe() {
+    parent.onUnsubscribe();
+  }
+
+  void update(Map value) {
+  }
+
 }

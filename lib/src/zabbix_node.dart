@@ -1,6 +1,7 @@
 library dslink.zabbix.nodes.zabbix;
 
 import 'dart:async';
+import 'dart:collection' show HashMap;
 
 import 'package:dslink/dslink.dart';
 import 'package:dslink/nodes.dart';
@@ -34,6 +35,7 @@ class ZabbixNode extends SimpleNode {
 
   ZabbixNode(String path, this._link) : super(path) {
     _clientComp = new Completer<ZabbixClient>();
+    _subscriptions = new HashMap();
   }
 
   Future<ZabbixClient> get client => _clientComp.future;
@@ -43,6 +45,8 @@ class ZabbixNode extends SimpleNode {
   int _refreshRate;
   Completer<ZabbixClient> _clientComp;
   LinkProvider _link;
+  HashMap<String, Set> _subscriptions;
+  Timer _refreshTimer;
 
   @override
   void onCreated() {
@@ -87,10 +91,13 @@ class ZabbixNode extends SimpleNode {
         'selectHosts' : 'hostid',
         'selectFunctions' : 'expand'
       };
-      _client.makeRequest('trigger.get', trigArgs).then(_populateTriggers);
+      _client.makeRequest(RequestMethod.triggerGet, trigArgs)
+          .then(_populateTriggers);
       _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
         .then(_populateItems);
     });
+    var dur = new Duration(milliseconds: _refreshRate * 1000);
+    _refreshTimer = new Timer.periodic(dur, _refreshCallback);
   }
 
   @override
@@ -117,8 +124,17 @@ class ZabbixNode extends SimpleNode {
     _link.save();
   }
 
-  void addSubscription(ZabbixChild child) {
+  void addSubscription(String parId, String type) {
     // TODO: Add implementation for Subscriptions/Timers
+    print('Subscription for: ${parId} which is: $type');
+
+    Set set = _subscriptions.putIfAbsent(type, () => new Set());
+    set.add(parId);
+  }
+
+  void removeSubscription(String parId, String type) {
+    var set = _subscriptions[type];
+    set?.remove(parId);
   }
 
   bool updateChild(String path, String name, newValue, oldValue) => true;
@@ -200,6 +216,65 @@ class ZabbixNode extends SimpleNode {
           logger.fine('No associated host. $evnt');
         }
       }
+    }
+  }
+
+  Future _refreshCallback(Timer t) async {
+    print('Calling refresh callback');
+    print('Subscriptions: $_subscriptions');
+    for (var reqType in _subscriptions.keys) {
+      var ids = _subscriptions[reqType].toList(growable: false);
+      if (ids.isEmpty) continue;
+      var args = {};
+
+      var cmd = '';
+      switch (reqType) {
+        case ZabbixTrigger.isType:
+          cmd = RequestMethod.triggerGet;
+          args = {
+            'triggerids' : ids,
+            'expandComment' :  true,
+            'expandDescription' : true,
+            'expandExpression' : true,
+            'selectFunctions' : 'expand'
+          };
+          break;
+        case ZabbixItem.isType:
+          cmd = RequestMethod.itemGet;
+          args = { 'itemids' : ids };
+          break;
+        default:
+          cmd = null;
+          break;
+      }
+      if (cmd == null) continue;
+      _client.makeRequest(cmd, args).then((result) {
+        if (result.containsKey('error')) {
+          logger.warning('Error updating nodes: ${result['error']}');
+          return;
+        }
+
+        for (var tmp in result['result']) {
+          ZabbixChild nd;
+          var tmpId = '';
+          switch (reqType) {
+            case ZabbixTrigger.isType:
+              tmpId = tmp['triggerid'];
+              nd = ZabbixTrigger.getById(tmpId);
+              break;
+            case ZabbixItem.isType:
+              tmpId = tmp['itemid'];
+              nd = ZabbixItem.getById(tmpId);
+              break;
+          }
+
+          if (nd == null) {
+            logger.warning('Unable to find: $tmpId of type: $reqType');
+            continue;
+          }
+          nd.update(tmp);
+        }
+      });
     }
   }
 

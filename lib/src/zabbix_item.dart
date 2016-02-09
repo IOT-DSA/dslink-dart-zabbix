@@ -1,6 +1,7 @@
 library dslink.zabbix.nodes.zabbix_item;
 
 import 'dart:async';
+import 'dart:collection' show HashMap;
 
 import 'package:dslink/utils.dart' show logger;
 
@@ -26,6 +27,7 @@ class ZabbixItem extends ZabbixChild {
   static const snmpv3SecurityLevels = const ['noAuthNoPriv', 'authNoPriv', 'authPriv'];
   static const states = const['normal', 'not supported'];
   static const statuses = const ['enabled', 'disabled'];
+  static const flags = const { '0': 'Plain Item', '1' : 'Discovered Item' };
 
   static Map<String, dynamic> definition(Map item) {
     var itmType = itemTypes[int.parse(item['type'])];
@@ -62,7 +64,7 @@ class ZabbixItem extends ZabbixChild {
           item['description'], true),
       'error' : ZabbixValue.definition('Error', 'string', item['error'], false),
       'flags' : ZabbixValue.definition('Flags', 'string',
-          (item['flags'] == '0' ? 'Plain item' : 'Discovered Item'), false),
+          flags[item['flag']], false),
       'formula' : ZabbixValue.definition('Custom multiplier', 'number',
           num.parse(item['formula'], (_) => 1), true),
       'history' : ZabbixValue.definition('History age', 'number',
@@ -131,7 +133,15 @@ class ZabbixItem extends ZabbixChild {
     };
   }
 
+  static HashMap<String, ZabbixItem> _cache = new HashMap<String, ZabbixItem>();
+  static getById(String id) => _cache[id];
+
   ZabbixItem(String path) : super(path);
+
+  @override
+  void onCreated() {
+    _cache.putIfAbsent(name, () => this);
+  }
 
   bool updateChild(String path, String valueName, newValue, oldValue) {
     var itemid = name;
@@ -187,5 +197,87 @@ class ZabbixItem extends ZabbixChild {
       provider.updateValue(path, oldValue);
     }
 
+  }
+
+  void update(Map updatedValues) {
+    var flag = flags[updatedValues['flags']];
+    var authType = authTypes[int.parse(updatedValues['authtype'])];
+    var itmType = itemTypes[int.parse(updatedValues['type'])];
+    var valType = valueTypes[int.parse(updatedValues['value_type'])];
+    var dataType = dataTypes[int.parse(updatedValues['data_type'])];
+    var deltaType = deltaTypes[int.parse(updatedValues['delta'])];
+    var state = states[int.parse(updatedValues['state'])];
+    var status = statuses[int.parse(updatedValues['status'])];
+    var snmpv3AuthProto = snmpv3AuthProtocols[int.parse(updatedValues['snmpv3_authprotocol'])];
+    var snmpv3PrivProto = snmpv3PrivProtocols[int.parse(updatedValues['snmpv3_privprotocol'])];
+    var snmpv3Seclvl = snmpv3SecurityLevels[int.parse(updatedValues['snmpv3_securitylevel'])];
+
+    for (var key in updatedValues.keys) {
+      var newVal;
+      ZabbixValue nd;
+      if (key.startsWith('snmp')) {
+        nd = provider.getNode('$path/snmp/$key');
+      } else {
+        nd = provider.getNode('$path/$key');
+      }
+
+      switch (key) {
+        case 'authtype':
+          newVal = authType;
+          break;
+        case 'type' :
+          newVal = itmType;
+          break;
+        case 'value_type':
+          newVal = valType;
+          break;
+        case 'data_type':
+          newVal = dataType;
+          break;
+        case 'delta':
+          newVal = deltaType;
+          break;
+        case 'flags':
+          newVal = flag;
+          break;
+        case 'formula':
+          newVal = num.parse(updatedValues['formula']);
+          break;
+        case 'history':
+          newVal = int.parse(updatedValues['history']);
+          break;
+        case 'inventory_link':
+          newVal = int.parse(updatedValues['inventory_link']);
+          break;
+        case 'lastns':
+          newVal = int.parse(updatedValues['lastns']);
+          break;
+        case 'multiplier':
+          newVal = int.parse(updatedValues['multiplier']);
+          break;
+        case 'snmpv3_authprotocol':
+          newVal = snmpv3AuthProto;
+          break;
+        case 'snmpv3_privprotocol':
+          newVal = snmpv3PrivProto;
+          break;
+        case 'snmpv3_securitylevel':
+          newVal = snmpv3Seclvl;
+          break;
+        case 'state':
+          newVal = state;
+          break;
+        case 'status':
+          newVal = status;
+          break;
+        case 'trends':
+          newVal = int.parse(updatedValues['trends']);
+          break;
+        default:
+          newVal = updatedValues[key];
+      }
+
+      nd?.updateValue(newVal);
+    }
   }
 }
