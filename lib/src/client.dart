@@ -25,6 +25,7 @@ abstract class RequestMethod {
   static const String itemUpdate = 'item.update';
 
   static const String triggerGet = 'trigger.get';
+  static const String triggerUpdate = 'trigger.update';
 
   static const String userLogin = 'user.login';
 }

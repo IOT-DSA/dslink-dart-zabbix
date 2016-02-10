@@ -1,8 +1,12 @@
 library dslink.zabbix.nodes.zabbix_triggers;
 
+import 'dart:async';
 import 'dart:collection' show HashMap;
 
+import 'package:dslink/utils.dart' show logger;
+
 import 'common.dart';
+import 'client.dart';
 
 class ZabbixTrigger extends ZabbixChild {
   static final HashMap<String, ZabbixTrigger> _cache =
@@ -72,8 +76,39 @@ class ZabbixTrigger extends ZabbixChild {
   }
 
   bool updateChild(String path, String valueName, newValue, oldValue) {
-    // TODO: Complete this.
-    return true;
+    var trigId = name;
+    var sendVal;
+
+    switch (valueName) {
+      case 'priority':
+        sendVal = _priorities.indexOf(newValue);
+        break;
+      case 'status':
+        sendVal = _statuses.indexOf(newValue);
+        break;
+      case 'type':
+        sendVal = _types.indexOf(newValue);
+        break;
+      default:
+        sendVal = newValue;
+    }
+
+    var args = {
+      'triggerid' : trigId,
+      valueName : sendVal
+    };
+
+    _updateValue(path, args, oldValue);
+    return false;
+  }
+
+  Future _updateValue(String path, Map params, oldValue) async {
+    var cl = await client;
+    var res = await cl.makeRequest(RequestMethod.triggerUpdate, params);
+    if (res.containsKey('error')) {
+      logger.warning('Error updating: "$params" Server error: ${res['error']}');
+      provider.updateValue(path, oldValue);
+    }
   }
 
   void update(Map updatedValues) {
