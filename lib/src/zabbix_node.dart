@@ -113,6 +113,16 @@ class ZabbixNode extends SimpleNode {
     configs[r'$$zb_addr'] = params['address'];
     configs[r'$$zb_refresh'] = params['refreshRate'];
 
+    if (_refreshRate != params['refreshRate']) {
+      if (_refreshTimer != null && _refreshTimer.isActive) {
+        _refreshTimer.cancel();
+      }
+      _refreshRate = params['refreshRate'];
+      _refreshTimer = new Timer.periodic(
+          new Duration(milliseconds: _refreshRate * 1000),
+          _refreshCallback);
+    }
+
     if (newClient != _client) {
       _client.close();
       _client = newClient;
@@ -266,6 +276,12 @@ class ZabbixNode extends SimpleNode {
             'select_acknowledges' : 'extend',
           };
           break;
+        case ZabbixHost.isType:
+          cmd = RequestMethod.hostGet;
+          args = {
+            'hostids' : ids,
+          };
+          break;
         default:
           cmd = null;
           break;
@@ -294,6 +310,10 @@ class ZabbixNode extends SimpleNode {
             case ZabbixEvent.isType:
               tmpId = tmp['eventid'];
               nd = ZabbixEvent.getById(tmpId);
+              break;
+            case ZabbixHost.isType:
+              tmpId = tmp['hostid'];
+              nd = ZabbixHost.getById(tmpId);
               break;
           }
 
