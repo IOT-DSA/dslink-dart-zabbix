@@ -137,7 +137,6 @@ class ZabbixNode extends SimpleNode {
   }
 
   void addSubscription(String parId, String type, String valueName) {
-    // TODO: Add implementation for Subscriptions/Timers
     print('Subscription for: ${parId} which is: $type');
 
     HashMap typeMap = _subscriptions.putIfAbsent(type, () => new HashMap<String, Set>());

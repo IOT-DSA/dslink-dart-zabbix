@@ -104,7 +104,6 @@ class ZabbixValue extends ZabbixChild {
   @override
   bool onSetValue(Object value) => updateChild(path, name, value, this.value);
 
-  // TODO: Overried onSubscribe/onUnsubscribe
   @override
   void onSubscribe({String valueName: '_rootVal'}) {
     var p = parent;

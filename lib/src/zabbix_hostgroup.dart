@@ -35,7 +35,17 @@ class ZabbixHostGroup extends ZabbixChild {
   bool updateChild(String path, String valueName, newValue, oldValue) => true;
 
   void update(Map updatedValues) {
-    // TODO
+    // Don't update hostgroups.
+  }
+
+  @override
+  void onSubscribe({String valueName: '_rootVal'}) {
+    // Don't subscribe to hostgroups.
+  }
+
+  @override
+  void onUnsubscribe({String valueName: '_rootVal'}) {
+    // Don't unsubscribe to hostgroups
   }
 }
 
