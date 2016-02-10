@@ -112,7 +112,7 @@ class ZabbixEvent extends ZabbixChild {
 
   void update(Map updatedValues) {
     updateAcknowledges(List<Map> acks) {
-      var acksNd = provider.getOrCreateNode('$path/Acknowledgements');
+      var acksNd = provider.getOrCreateNode('$path/acknowledged/Acknowledgements');
 
       for (Map ack in acks) {
         var aNode = provider.getNode('${acksNd.path}/${ack['acknowledgeid']}');

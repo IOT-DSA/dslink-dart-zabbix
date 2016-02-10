@@ -36,6 +36,7 @@ class ZabbixNode extends SimpleNode {
   ZabbixNode(String path, this._link) : super(path) {
     _clientComp = new Completer<ZabbixClient>();
     _subscriptions = new HashMap<String, HashMap<String, Set>>();
+    _pendingRequests = new Set<String>();
   }
 
   Future<ZabbixClient> get client => _clientComp.future;
@@ -47,6 +48,7 @@ class ZabbixNode extends SimpleNode {
   LinkProvider _link;
   HashMap<String, HashMap<String, Set>> _subscriptions;
   Timer _refreshTimer;
+  Set<String> _pendingRequests;
 
   @override
   void onCreated() {
@@ -202,6 +204,7 @@ class ZabbixNode extends SimpleNode {
 
     var eventArgs = {
       'select_acknowledges' : 'extend',
+      'selectHosts' : 'hostid'
     };
 
     _client.makeRequest(RequestMethod.alertGet, null).then(_populateAlerts);
@@ -234,6 +237,8 @@ class ZabbixNode extends SimpleNode {
     print('Calling refresh callback');
     print('Subscriptions: $_subscriptions');
     for (var reqType in _subscriptions.keys) {
+      if (_pendingRequests.contains(reqType)) continue;
+
       var ids = _subscriptions[reqType].keys.toList(growable: false);
       if (ids.isEmpty) continue;
       var args = {};
@@ -266,6 +271,8 @@ class ZabbixNode extends SimpleNode {
           break;
       }
       if (cmd == null) continue;
+
+      _pendingRequests.add(reqType);
       _client.makeRequest(cmd, args).then((result) {
         if (result.containsKey('error')) {
           logger.warning('Error updating nodes: ${result['error']}');
@@ -296,6 +303,7 @@ class ZabbixNode extends SimpleNode {
           }
           nd.update(tmp);
         }
+        _pendingRequests.remove(reqType);
       });
     }
   }
