@@ -107,12 +107,22 @@ class ZabbixValue extends ZabbixChild {
   // TODO: Overried onSubscribe/onUnsubscribe
   @override
   void onSubscribe({String valueName: '_rootVal'}) {
-    (parent as ZabbixChild).onSubscribe(valueName: name);
+    var p = parent;
+    while (p is! ZabbixChild && p is! ZabbixNode) {
+      p = p.parent;
+      if (p == null) break;
+    }
+    (p as ZabbixChild)?.onSubscribe(valueName: name);
   }
 
   @override
   void onUnsubscribe({String valueName: '_rootVal'}) {
-    (parent as ZabbixChild).onUnsubscribe(valueName: name);
+    var p = parent;
+    while (p is! ZabbixChild && p is! ZabbixNode) {
+      p = p.parent;
+      if (p == null) break;
+    }
+    (p as ZabbixChild)?.onUnsubscribe(valueName: name);
   }
 
   void update(Map value) {
