@@ -5,27 +5,27 @@ import 'common.dart';
 class ZabbixAlert extends ZabbixChild {
   static const isType = 'zabbixAlertNode';
 
-  static Map<String, dynamic> definition(Map alert) {
-    final alertStatus = {
-      '0' : {
-        'type' : 'message',
-        'status' : {
-          '0' : 'message not sent',
-          '1' : 'message sent',
-          '2' : 'failed after a number of retries'
-        }
-      },
-      '1' : {
-        'type' : 'remote command',
-        'status' : {
-          '1' : 'command run',
-          '2' : 'Tried but Zabbix agent unavailable.'
-        }
+  static const _alertStatus = const {
+    '0' : const {
+      'type' : 'message',
+      'status' : const {
+        '0' : 'message not sent',
+        '1' : 'message sent',
+        '2' : 'failed after a number of retries'
       }
-    };
+    },
+    '1' : const {
+      'type' : 'remote command',
+      'status' : const {
+        '1' : 'command run',
+        '2' : 'Tried but Zabbix agent unavailable.'
+      }
+    }
+  };
 
-    var alertType = alertStatus[alert['alerttype']]['type'];
-    var status = alertStatus[alert['alerttype']]['status'][alert['status']];
+  static Map<String, dynamic> definition(Map alert) {
+    var alertType = _alertStatus[alert['alerttype']]['type'];
+    var status = _alertStatus[alert['alerttype']]['status'][alert['status']];
 
     return {
       r'$is' : isType,
@@ -53,7 +53,15 @@ class ZabbixAlert extends ZabbixChild {
 
   bool updateChild(String path, String valueName, newValue, oldValue) => true;
 
+  void onSubscribe({String valueName: '_rootVal'}) {
+    // Don't implement subscribe since values don't update.
+  }
+
+  void onUnsubscribe({String valueName: '_rootVal'}) {
+    // Don't implement unsubscribe since we can't subscribe.
+  }
+
   void update(Map updatedValues) {
-    // TODO
+    // Alerts don't update
   }
 }

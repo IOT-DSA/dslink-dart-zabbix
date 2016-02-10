@@ -202,7 +202,6 @@ class ZabbixNode extends SimpleNode {
 
     var eventArgs = {
       'select_acknowledges' : 'extend',
-      'selectHosts' : 'hostid'
     };
 
     _client.makeRequest(RequestMethod.alertGet, null).then(_populateAlerts);
@@ -255,6 +254,13 @@ class ZabbixNode extends SimpleNode {
           cmd = RequestMethod.itemGet;
           args = { 'itemids' : ids };
           break;
+        case ZabbixEvent.isType:
+          cmd = RequestMethod.eventGet;
+          args = {
+            'eventids' : ids,
+            'select_acknowledges' : 'extend',
+          };
+          break;
         default:
           cmd = null;
           break;
@@ -277,6 +283,10 @@ class ZabbixNode extends SimpleNode {
             case ZabbixItem.isType:
               tmpId = tmp['itemid'];
               nd = ZabbixItem.getById(tmpId);
+              break;
+            case ZabbixEvent.isType:
+              tmpId = tmp['eventid'];
+              nd = ZabbixEvent.getById(tmpId);
               break;
           }
 

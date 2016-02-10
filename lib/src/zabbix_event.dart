@@ -13,55 +13,61 @@ class ZabbixEvent extends ZabbixChild {
   static const String isType = 'zabbixEventNode';
 
   static final HashMap<String, ZabbixEvent> _cache =
-      new HashMap<String, ZabbixEvent>();
+  new HashMap<String, ZabbixEvent>();
 
   static ZabbixEvent getById(String id) => _cache[id];
 
-  static Map<String, dynamic> definition(Map event) {
-    final sources = ['trigger', 'discovery rule', 'auto-registration', 'internal'];
-    var source = sources[int.parse(event['source'])];
-    var time = new DateTime.fromMillisecondsSinceEpoch(int.parse(event['clock']) * 1000);
+  static const _values = const {
+    '0' : const { '0' : 'Ok', '1' : 'Problem'},
+    '1' : const {
+      '0' : 'host or service up',
+      '1' : 'host or service down',
+      '2' : 'host or service discovered',
+      '3' : 'host or service lost'
+    },
+    '3' : const { '0' : 'normal', '1' : 'Unknown or Not Supported'}
+  };
+  static const _objects = const {
+    '0' : const { '0' : 'Trigger'},
+    '1' : const { '1' : 'discovered host', '2' : 'discovered service'},
+    '2' : const { '3' : 'auto-registered host'},
+    '3' : const { '0' : 'Trigger', '4' : 'Item', '5' : 'LLD rule'}
+  };
+  static const _sources = const [
+    'trigger', 'discovery rule', 'auto-registration', 'internal'];
 
-    final objects = {
-      '0' : { '0' : 'Trigger'},
-      '1' : { '1' : 'discovered host', '2' : 'discovered service' },
-      '2' : { '3' : 'auto-registered host' },
-      '3' : { '0' : 'Trigger', '4' : 'Item', '5' : 'LLD rule' }
-    };
-    var relatedObject = objects[event['source']][event['object']];
+  static Map<String, dynamic> _acknowledgementDefinition(Map ack) {
+    var ackTime = new DateTime.fromMillisecondsSinceEpoch(
+        int.parse(ack['clock']) * 1000);
 
-    final values = {
-      '0' : { '0' : 'Ok', '1' : 'Problem' },
-      '1' : {
-        '0' : 'host or service up',
-        '1' : 'host or service down',
-        '2' : 'host or service discovered',
-        '3' : 'host or service lost'
+    return {
+      'userid' : {
+        r'$name' : 'User ID',
+        r'$type' : 'string',
+        r'?value' : ack['userid'],
+        'alias' : ZabbixValue.definition('Alias', 'string', ack['alias'],
+            false),
+        'name' : ZabbixValue.definition('Name', 'string', ack['name'], false),
+        'surname' : ZabbixValue.definition('Surname', 'string',
+            ack['surname'], false)
       },
-      '3' : { '0' : 'normal', '1' : 'Unknown or Not Supported' }
+      'clock' : ZabbixValue.definition('Acknowledged Time', 'string',
+          ackTime.toIso8601String(), false),
+      'message' : ZabbixValue.definition('Message', 'string', ack['message'],
+          false)
     };
-    var eventValue = values[event['source']][event['value']];
+  }
 
-    var acknowledgements = { };
+  static Map<String, dynamic> definition(Map event) {
+    var source = _sources[int.parse(event['source'])];
+    var time = new DateTime.fromMillisecondsSinceEpoch(
+        int.parse(event['clock']) * 1000);
+    var relatedObject = _objects[event['source']][event['object']];
+    var eventValue = _values[event['source']][event['value']];
+
+    var acknowledgements = {};
     for (Map ack in event['acknowledges']) {
-      var ackTime = new DateTime.fromMillisecondsSinceEpoch(int.parse(ack['clock']) * 1000);
-
-      acknowledgements[ack['acknowledgeid']] = {
-        'userid' : {
-          r'$name' : 'User ID',
-          r'$type' : 'string',
-          r'?value' : ack['userid'],
-          'alias' : ZabbixValue.definition('Alias', 'string', ack['alias'],
-              false),
-          'name' : ZabbixValue.definition('Name', 'string', ack['name'], false),
-          'surname' : ZabbixValue.definition('Surname', 'string',
-              ack['surname'], false)
-        },
-        'clock' : ZabbixValue.definition('Acknowledged Time', 'string',
-            ackTime.toIso8601String(), false),
-        'message' : ZabbixValue.definition('Message', 'string', ack['message'],
-            false)
-      };
+      acknowledgements[ack['acknowledgeid']] = _acknowledgementDefinition(ack);
     }
 
     var ret = {
@@ -74,7 +80,8 @@ class ZabbixEvent extends ZabbixChild {
         r'?value' : int.parse(event['acknowledged']),
         'Acknowledgements' : acknowledgements
       },
-      'clock' : ZabbixValue.definition('Created', 'string', time.toIso8601String(),
+      'clock' : ZabbixValue.definition(
+          'Created', 'string', time.toIso8601String(),
           false),
       'ns' : ZabbixValue.definition('Created (nanoseconds)', 'string',
           event['ns'], false),
@@ -104,7 +111,77 @@ class ZabbixEvent extends ZabbixChild {
   bool updateChild(String path, String valueName, newValue, oldValue) => true;
 
   void update(Map updatedValues) {
-    // TODO
+    updateAcknowledges(List<Map> acks) {
+      var acksNd = provider.getOrCreateNode('$path/Acknowledgements');
+
+      for (Map ack in acks) {
+        var aNode = provider.getNode('${acksNd.path}/${ack['acknowledgeid']}');
+        if (aNode == null) {
+          provider.addNode('${acksNd.path}/${ack['acknowledgeid']}',
+              _acknowledgementDefinition(ack));
+          continue;
+        }
+
+        var ackTime = new DateTime.fromMillisecondsSinceEpoch(
+            int.parse(ack['clock']) * 1000);
+        for (var key in ack.keys) {
+          LocalNode nd;
+          var newVal;
+          switch (key) {
+            case 'alias':
+            case 'name':
+            case 'surname':
+              nd = provider.getNode('${aNode.path}/userid/$key');
+              newVal = ack[key];
+              break;
+            case 'clock':
+              newVal = ackTime.toIso8601String();
+              break;
+            default:
+              nd = provider.getNode('${aNode.path}/$key');
+              newVal = ack[key];
+          }
+
+          nd.updateValue(newVal);
+        }
+      }
+    }
+
+    var source = _sources[int.parse(updatedValues['source'])];
+    var clock = new DateTime.fromMillisecondsSinceEpoch(
+        int.parse(updatedValues['clock']) * 1000);
+    var relatedObject = _objects[updatedValues['source']][updatedValues['object']];
+    var eventValue = _values[updatedValues['source']][updatedValues['value']];
+
+    for (var key in updatedValues.keys) {
+      var nd = provider.getNode('$path/$key');
+      var newVal;
+      switch (key) {
+        case 'acknowledges':
+          updateAcknowledges(updatedValues[key]);
+          continue;
+        case 'clock':
+          newVal = clock.toIso8601String();
+          break;
+        case 'object':
+          newVal = relatedObject;
+          break;
+        case 'source':
+          newVal = source;
+          break;
+        case 'value':
+          newVal = eventValue;
+          break;
+        default:
+          newVal = updatedValues[key];
+      }
+
+      if (nd == null && key == 'value_changed') {
+        provider.addNode('$path/$key', ZabbixValue.definition('Value Changed',
+            'number', num.parse(updatedValues[key]), false));
+      }
+      nd?.updateValue(newVal);
+    }
   }
 }
 
