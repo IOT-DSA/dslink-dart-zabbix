@@ -67,45 +67,12 @@ class ZabbixNode extends SimpleNode {
 
     _client = new ZabbixClient(address, username, password);
 
-    var hostIds = [];
     _client.authenticate().then((_) {
       _clientComp.complete(_client);
       var params = {'selectHosts' : 'extend'};
-      return _client.makeRequest(RequestMethod.hostgroupGet, params);
-    }).then((result) {
-      if (result.containsKey('error')) {
-        logger.warning('Error polling hostgroups: ${result['error']}');
-        return null;
-      }
-      var groupList = result['result'] as List;
-      var hgPath = provider.getOrCreateNode('$path/HostGroups');
-      for (Map gp in groupList) {
-        var name = gp['groupid'];
-        var hgNode = provider.addNode('${hgPath.path}/$name',
-            ZabbixHostGroup.definition(gp));
-        if (gp['hosts'] != null && gp['hosts'].isNotEmpty) {
-          for (Map host in gp['hosts']) {
-            var hName = host['hostid'];
-            provider.addNode('${hgNode.path}/$hName',
-                ZabbixHost.definition(host));
-            hostIds.add(hName);
-          }
-        }
-      }
-
-      var trigArgs = {
-        'hostids' : hostIds,
-        'expandComment' :  true,
-        'expandDescription' : true,
-        'expandExpression' : true,
-        'selectHosts' : 'hostid',
-        'selectFunctions' : 'expand'
-      };
-      _client.makeRequest(RequestMethod.triggerGet, trigArgs)
-          .then(_populateTriggers);
-      _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
-        .then(_populateItems);
+      _client.makeRequest(RequestMethod.hostgroupGet, params).then(updateHosts);
     });
+
     var dur = new Duration(milliseconds: _refreshRate * 1000);
     _refreshTimer = new Timer.periodic(dur, _refreshCallback);
   }
@@ -113,6 +80,49 @@ class ZabbixNode extends SimpleNode {
   @override
   void onRemoving() {
     _client.close();
+  }
+
+  String updateHosts(Map<String, dynamic> hostGroups) {
+    var hostIds = [];
+
+    if (hostGroups.containsKey('error')) {
+      logger.warning('Error polling hostgroups: ${hostGroups['error']}');
+      return hostGroups['error'];
+    }
+    var groupList = hostGroups['result'] as List;
+    var hgPath = provider.getOrCreateNode('$path/HostGroups');
+    for (var nd in hgPath.children.keys.toList(growable: false)) {
+      provider.removeNode('${hgPath.path}/$nd');
+    }
+
+    for (Map gp in groupList) {
+      var name = gp['groupid'];
+      var hgNode = provider.addNode('${hgPath.path}/$name',
+          ZabbixHostGroup.definition(gp));
+      if (gp['hosts'] != null && gp['hosts'].isNotEmpty) {
+        for (Map host in gp['hosts']) {
+          var hName = host['hostid'];
+          provider.addNode('${hgNode.path}/$hName',
+              ZabbixHost.definition(host));
+          hostIds.add(hName);
+        }
+      }
+    }
+
+    var trigArgs = {
+      'hostids' : hostIds,
+      'expandComment' :  true,
+      'expandDescription' : true,
+      'expandExpression' : true,
+      'selectHosts' : 'hostid',
+      'selectFunctions' : 'expand'
+    };
+    _client.makeRequest(RequestMethod.triggerGet, trigArgs)
+        .then(_populateTriggers);
+    _client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
+        .then(_populateItems);
+
+    return null;
   }
 
   void updateConfig(Map params, ZabbixClient newClient) {
@@ -145,8 +155,6 @@ class ZabbixNode extends SimpleNode {
   }
 
   void addSubscription(String parId, String type, String valueName) {
-    print('Subscription for: ${parId} which is: $type');
-
     HashMap typeMap = _subscriptions.putIfAbsent(type, () => new HashMap<String, Set>());
     Set items = typeMap.putIfAbsent(parId, () => new Set());
     items.add(valueName);
@@ -251,8 +259,6 @@ class ZabbixNode extends SimpleNode {
   }
 
   Future _refreshCallback(Timer t) async {
-    print('Calling refresh callback');
-    print('Subscriptions: $_subscriptions');
     for (var reqType in _subscriptions.keys) {
       if (_pendingRequests.contains(reqType)) continue;
 
@@ -361,56 +367,18 @@ class RefreshConnection extends SimpleNode {
   Future<Map<String, dynamic>> onInvoke(Map<String, dynamic> params) async {
     final ret = { _success: false, _message : '' };
 
-    final client = await (parent as ZabbixNode).client;
-    final p = {'selectHosts': 'extend'};
-    final results = await client.makeRequest(RequestMethod.hostgroupGet, p);
-    if (results.containsKey('error')) {
-      return ret..[_message] = 'Error polling hostgroups: ${results['error']}';
+    var params = {'selectHosts' : 'extend'};
+    var cl = await (parent as ZabbixNode).client;
+
+    var groups = await cl.makeRequest(RequestMethod.hostgroupGet, params);
+    var result = (parent as ZabbixNode).updateHosts(groups);
+
+    ret[_success] = (result == null);
+    if (ret[_success]) {
+      ret[_message] = 'Success!';
+    } else {
+      ret[_message] = 'Unable to update hosts: $result';
     }
-
-    final groupList = results['result'] as List;
-    var hgNode = provider.getOrCreateNode('${parent.path}/HostGroups');
-    final hostIds = [];
-
-    for (Map gp in groupList) {
-      var name = gp['groupid'];
-      var hgNd = provider.getNode('$hgNode/$name') as ZabbixHostGroup;
-      if (hgNd == null) {
-        hgNd = provider.addNode('$hgNode/$name', ZabbixHostGroup.definition(gp));
-      }
-
-      if (gp['hosts'] == null || gp['hosts'].isEmpty) continue;
-
-      for (Map host in gp['hosts']) {
-        var name = host['hostid'];
-        var hNode = provider.getNode('${hgNode.path}/$name') as ZabbixHost;
-        if (hNode == null) {
-          hNode = provider.addNode('${hgNode.path}/$name',
-              ZabbixHost.definition(host));
-          hostIds.add(name);
-        } else {
-          hNode.update(host);
-        }
-      }
-    }
-
-    ret[_success] = true;
-    ret[_message] = 'Success!';
-
-    if (hostIds.isEmpty) return ret;
-
-    var trigArgs = {
-      'hostids' : hostIds,
-      'expandComment' :  true,
-      'expandDescription' : true,
-      'expandExpression' : true,
-      'selectHosts' : 'hostid',
-      'selectFunctions' : 'expand'
-    };
-    client.makeRequest(RequestMethod.triggerGet, trigArgs)
-        .then((parent as ZabbixNode)._populateTriggers);
-    client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
-        .then((parent as ZabbixNode)._populateItems);
 
     return ret;
   }

@@ -94,9 +94,7 @@ class ZabbixValue extends ZabbixChild {
       p = p.parent;
       if (p == null) break;
     }
-    if (p != null) {
-      print(p.name);
-    }
+
     var ret = p?.updateChild(path, name, newValue, oldValue);
     return ret ?? false;
   }
