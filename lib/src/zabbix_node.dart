@@ -30,7 +30,8 @@ class ZabbixNode extends SimpleNode {
       CreateHostGroup.pathName : CreateHostGroup.definition()
     },
     EditConnection.pathName : EditConnection.definition(params),
-    RemoveConnection.pathName : RemoveConnection.definition()
+    RemoveConnection.pathName : RemoveConnection.definition(),
+    RefreshConnection.pathName: RefreshConnection.definition()
   };
 
   ZabbixNode(String path, this._link) : super(path) {
@@ -52,6 +53,13 @@ class ZabbixNode extends SimpleNode {
 
   @override
   void onCreated() {
+    var refresh = provider.getNode('$path/${RefreshConnection.pathName}');
+    if (refresh == null) {
+      provider.addNode('$path/${RefreshConnection.pathName}',
+          RefreshConnection.definition());
+      _link.save();
+    }
+
     var username = getConfig(r'$$zb_user');
     var password = getConfig(r'$$zb_pass');
     var address = getConfig(r'$$zb_addr');
@@ -326,5 +334,84 @@ class ZabbixNode extends SimpleNode {
       });
     }
   }
+}
 
+
+class RefreshConnection extends SimpleNode {
+  static const String isType = 'connectionRefresh';
+  static const String pathName = 'Refresh_Hosts';
+
+  static const String _success = 'success';
+  static const String _message = 'message';
+
+  static Map<String, dynamic> definition() => {
+    r'$is': isType,
+    r'$name': 'Refresh Hosts',
+    r'$invokable': 'write',
+    r'$params': [],
+    r'$columns': [
+      { 'name': _success, 'type': 'bool', 'default': false },
+      { 'name': _message, 'type': 'string', 'default': '' }
+    ]
+  };
+
+  RefreshConnection(String path) : super(path);
+
+  @override
+  Future<Map<String, dynamic>> onInvoke(Map<String, dynamic> params) async {
+    final ret = { _success: false, _message : '' };
+
+    final client = await (parent as ZabbixNode).client;
+    final p = {'selectHosts': 'extend'};
+    final results = await client.makeRequest(RequestMethod.hostgroupGet, p);
+    if (results.containsKey('error')) {
+      return ret..[_message] = 'Error polling hostgroups: ${results['error']}';
+    }
+
+    final groupList = results['result'] as List;
+    var hgNode = provider.getOrCreateNode('${parent.path}/HostGroups');
+    final hostIds = [];
+
+    for (Map gp in groupList) {
+      var name = gp['groupid'];
+      var hgNd = provider.getNode('$hgNode/$name') as ZabbixHostGroup;
+      if (hgNd == null) {
+        hgNd = provider.addNode('$hgNode/$name', ZabbixHostGroup.definition(gp));
+      }
+
+      if (gp['hosts'] == null || gp['hosts'].isEmpty) continue;
+
+      for (Map host in gp['hosts']) {
+        var name = host['hostid'];
+        var hNode = provider.getNode('${hgNode.path}/$name') as ZabbixHost;
+        if (hNode == null) {
+          hNode = provider.addNode('${hgNode.path}/$name',
+              ZabbixHost.definition(host));
+          hostIds.add(name);
+        } else {
+          hNode.update(host);
+        }
+      }
+    }
+
+    ret[_success] = true;
+    ret[_message] = 'Success!';
+
+    if (hostIds.isEmpty) return ret;
+
+    var trigArgs = {
+      'hostids' : hostIds,
+      'expandComment' :  true,
+      'expandDescription' : true,
+      'expandExpression' : true,
+      'selectHosts' : 'hostid',
+      'selectFunctions' : 'expand'
+    };
+    client.makeRequest(RequestMethod.triggerGet, trigArgs)
+        .then((parent as ZabbixNode)._populateTriggers);
+    client.makeRequest(RequestMethod.itemGet, {'hostids' : hostIds})
+        .then((parent as ZabbixNode)._populateItems);
+
+    return ret;
+  }
 }
