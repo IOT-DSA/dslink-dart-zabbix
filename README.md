@@ -11,4 +11,6 @@ DSLink to connect with Zabbix monitoring systems.
     <dd>Add Refresh Hosts command</dd>
     <dt>1.1.1</dt>
     <dd>Optimized Refresh hosts to remove old nodes as well as add new</dd>
+    <dt>1.1.2</dt>
+    <dd>Updated DSA SDK version for bugfixes</dd>
 </dl>
