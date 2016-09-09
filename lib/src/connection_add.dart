@@ -8,6 +8,30 @@ import 'package:dslink/nodes.dart' show NodeNamer;
 import 'client.dart';
 import 'zabbix_node.dart';
 
+
+//* @Action Add_Connection
+//* @Is addConnectionNode
+//* @Parent root
+//*
+//* Adds a connection to a Zabbix Server.
+//*
+//* Add Connection will attempt to connect to the specified server with the
+//* provided credentials. If successful it will add a ZabbixNode to the root
+//* of the link with the specified name.
+//*
+//* @Param name string Name to specify the server. Name becomes the path of
+//* the new ZabbixNode when added.
+//* @Param address string Address is the full URL to the ZabbixServer
+//* @Param username string Username used to authenticate to the server.
+//* @Param password string Password used to authenticate to the server.
+//* @Param refreshRate number Refresh Rate is the number of seconds between
+//* polling the server for new information.
+//*
+//* @Return value
+//* @Column success bool Success is true when the action is successful, and
+//* false if the action failed.
+//* @Column message string Message is Success! when the action is successful,
+//* and provides an error message if the action failed.
 class AddConnection extends SimpleNode {
   static const String isType = 'addConnectionNode';
   static const String pathName = 'Add_Connection';

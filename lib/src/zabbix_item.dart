@@ -8,6 +8,14 @@ import 'package:dslink/utils.dart' show logger;
 import 'common.dart';
 import 'client.dart';
 
+//* @Node
+//* @MetaType ZabbixItem
+//* @Parent Items
+//*
+//* Items associated with a given Zabbix Host.
+//*
+//* Detailed information regarding the monitoring points for a given Zabbix Host.
+//* The path is the Item Id and the display name is the item's key.
 class ZabbixItem extends ZabbixChild {
   static const String isType = 'zabbixItemNode';
 
@@ -42,94 +50,434 @@ class ZabbixItem extends ZabbixChild {
     return {
       r'$is' : isType,
       r'$name' : item['key_'],
+      //* @Node itemid
+      //* @MetaType itemItemid
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Id of the Item.
+      //* @Value string
       'itemid' : ZabbixValue.definition('Item ID', 'string', item['itemid'], false),
+      //* @Node delay
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Update interval of the item in seconds.
+      //* @Value number
       'delay' : ZabbixValue.definition('Delay', 'number', item['delay'], true),
+      //* @Node hostid
+      //* @MetaType itemHostid
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Id of the host the item belongs to.
+      //* @Value string
       'hostid' : ZabbixValue.definition('Host ID', 'string', item['hostid'], true),
+      //* @Node interfaceid
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Id of the item's host interface. Only for host items.
+      //* @Value string
       'interfaceid' : ZabbixValue.definition('Host Interface ID', 'string',
           item['interfaceid'], true),
+      //* @Node key
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Item key
+      //* @Value string
       'key' : ZabbixValue.definition('Key', 'string', item['key_'], true),
+      //* @Node name
+      //* @MetaType itemName
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Name of the item
+      //* @Value string
       'name' : ZabbixValue.definition('Name', 'string', item['name'], true),
+      //* @Node type
+      //* @MetaType itemType
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Type of the item
+      //*
+      //* String representation of the type of the item. Can be set to an enum
+      //* value.
+      //*
+      //* @Value enum[Zabbix Agent,SNMPv1 Agent,Zabbix Trapper,Simple Check,SNMPv2 Agent,Zabbix Internal,SNMPv3 Agent,Zabbix Agent (active),Zabbix Aggregate,Web Item,External Clock,Database Monitor,IPMI Agent,SSH Agent,Telnet Agent,Calculated,JMX Agent,SNMP Trap]
       'type' : ZabbixValue.definition('Type', 'enum[${itemTypes.join(',')}]',
           itmType, true),
+      //* @Node value_type
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Type of information the item provides.
+      //*
+      //* Value type is the type of information that is contained in the value.
+      //* Can be set to one of the enum values.
+      //*
+      //* @Value enum[Numeric float,Character,Log,Numeric unsigned,text]
       'value_type' : ZabbixValue.definition('Value Type',
           'enum[${valueTypes.join(',')}]', valType, true),
+      //* @Node authtype
+      //* @MetaType itemAuthtype
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* SSH authentication method. Used only by SSH agent items.
+      //*
+      //* @Value enum[password,public key]
       'authtype' : ZabbixValue.definition(
           'SSH Authentication Method', 'enum[${authTypes.join(',')}]',
           authTypes[int.parse(item['authtype'])], true),
+      //* @Node data_type
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Data type of the item.
+      //*
+      //* @Value enum[decimal,octal,hexadecimal,boolean]
       'data_type' : ZabbixValue.definition('Data Type', 'enum[${dataTypes.join(',')}]',
           dataType, true),
+      //* @Node delay_flex
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Flexible intervals as a serialized string
+      //*
+      //* @Value string
       'delay_flex' : ZabbixValue.definition('Delay Flex', 'string', item['data_flex'], true),
+      //* @Node delta
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Value that will be stored.
+      //*
+      //* @Value enum[as is,Delta (speed per second),Delta (simple change)]
       'delta' : ZabbixValue.definition('Delta Type', 'enum[${deltaTypes.join(',')}]',
           deltaType, true),
+      //* @Node description
+      //* @MetaType itemDescription
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Description of the item.
+      //* @Value string
       'description' : ZabbixValue.definition('Description', 'string',
           item['description'], true),
+      //* @Node error
+      //* @MetaType itemError
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Error text if there are problems updating the item.
+      //* @Value string
       'error' : ZabbixValue.definition('Error', 'string', item['error'], false),
+      //* @Node flags
+      //* @MetaType itemFlags
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Origin of the item.
+      //*
+      //* A string representation of the origin of the time. Possible values
+      //* are Plain Item or Discovered Item.
+      //*
+      //* @Value string
       'flags' : ZabbixValue.definition('Flags', 'string',
           flags[item['flag']], false),
+      //* @Node formula
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Custom multipler
+      //* @Value number
       'formula' : ZabbixValue.definition('Custom multiplier', 'number',
           num.parse(item['formula'], (_) => 1), true),
+      //* @Node history
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Number of days to keep the item's history.
+      //* @Value number
       'history' : ZabbixValue.definition('History age', 'number',
           int.parse(item['history']), true),
+      //* @Node inventory_link
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Id of the host inventory field that is populated by the item.
+      //* @Value number
       'inventory_link' : ZabbixValue.definition('Host Inventory Id', 'number',
           int.parse(item['inventory_link']), true),
+      //* @Node ipmi_sensor
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* IPMI sensor. Used only by IPMI items.
+      //* @Value string
       'ipmi_sensor' : ZabbixValue.definition('IPMI Sensor', 'string',
           item['ipmi_sensor'], true),
+      //* @Node lastclock
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Timestamp when the item was last updated.
+      //* @Value string
       'lastclock' : ZabbixValue.definition('Last updated', 'string',
           lastClock.toIso8601String(), false),
+      //* @Node lastns
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Nanoseconds when the item was last updated.
+      //* @Value number
       'lastns' : ZabbixValue.definition('Last updated nanoseconds', 'number',
           int.parse(item['lastns']), false),
+      //* @Node lastvalue
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Last value of the item.
+      //* @Value string
       'lastvalue' : ZabbixValue.definition('Last Value', 'string',
           item['lastvalue'], false),
+      //* @Node logtimefmt
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Format of the time in log entries. Only used by log items.
+      //* @Value string
       'logtimefmt' : ZabbixValue.definition('Log time format', 'string',
           item['logtimefmt'], true),
+      //* @Node mtime
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Time when the monitored log file was last updated.
+      //* @Value string
       'mtime' : ZabbixValue.definition('Monitored Log last updated', 'string',
           item['mtime'], false),
+      //* @Node multiplier
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Whether to use a custom multiplier
+      //* @Value number
       'multiplier' : ZabbixValue.definition('Use custom multiplier', 'number',
           int.parse(item['multiplier']), true),
+      //* @Node params
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Additional parameters depending on the type of the item.
+      //*
+      //* Parameters may be executed scripts for SSH/Telnet items; SQL query
+      //* for database monitor items; or formula for calculated items.
+      //*
+      //* @Value string
       'params' : ZabbixValue.definition('Additional Parameters', 'string',
           item['params'], true),
+      //* @Node password
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Password used for authentication.
+      //*
+      //* Password that is required for simple check, SSH, telnet, database
+      //* monitor and JMX items.
+      //*
+      //* @Value string
       'passsword' : ZabbixValue.definition('Password', 'string', item['password'], true),
-      'port' : ZabbixValue.definition('Port', 'sting', item['port'], true),
+      //* @Node port
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Port monitored by the item. Used only by SNMP items.
+      //* @Value string
+      'port' : ZabbixValue.definition('Port', 'string', item['port'], true),
+      //* @Node prevvalue
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Previous value of the item.
+      //* @Value string
       'prevvalue' : ZabbixValue.definition('Previous Value', 'string',
           item['prevvalue'], false),
+      //* @Node privatekey
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Name of the private key file.
+      //* @Value string
       'privatekey' : ZabbixValue.definition('Private Key filename', 'string',
           item['privatekey'], true),
+      //* @Node publickey
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Name of the public key file.
+      //* @Value string
       'publickey' : ZabbixValue.definition('Public Key filename', 'string',
           item['publickey'], true),
+      //* @Node snmp
+      //* @MetaType itemSNMP
+      //* @Parent ZabbixItem
+      //*
+      //* Collection of Item SNMP configurations.
       'snmp' : {
         r'$type' : 'string',
         r'?value' : '',
+        //* @Node snmp_community
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMP community. Used only by SNMPv1 an SNMPv2 items.
+        //* @Value string
         'snmp_community' : ZabbixValue.definition('SNMP Community', 'string',
             item['snmp_community'], true),
+        //* @Node snmp_oid
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMP OID to query.
+        //* @Value string
         'snmp_oid' : ZabbixValue.definition('OID', 'string', item['snmp_oid'], true),
+        //* @Node snmpv3_authpassphrase
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMPv3 auth passphrase. Used only by SNMPv3 items.
+        //* @Value string
         'snmpv3_authpassphrase' : ZabbixValue.definition('SNMPv3 Passphrase', 'string',
             item['snmpv3_authpassphrase'], true),
+        //* @Node snmpv3_authprotocol
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMPv3 auth protocol. Used only by SNMPv3 items.
+        //*
+        //* @Value enum[MD5,SHA]
         'snmpv3_authprotocol' : ZabbixValue.definition('SNMPv3 Protocol',
             'enum[${snmpv3AuthProtocols.join(',')}]', snmpv3AuthProto, true),
+        //* @Node snmpv3_contextname
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMPv3 context name. Used only by SNMPv3 items.
+        //* @Value string
         'snmpv3_contextname' : ZabbixValue.definition('SNMPv3 Context Name',
             'string', item['snmpv3_contextname'], true),
+        //* @Node snmpv3_privpassphrase
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMPv3 priv passphrase. Used only by SNMPv3 items.
+        //* @Value string
         'snmpv3_privpassphrase' : ZabbixValue.definition('SNMPv3 Priv Passphrase',
             'string', item['snmpv3_privpassphrase'], true),
+        //* @Node snmpv3_privprotocol
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMPv3 privacy protocol.
+        //*
+        //* @Value enum[DES,AES]
         'snmpv3_privprotocol' : ZabbixValue.definition('SNMPv3 Priv Protocol',
-            'enum[${snmpv3AuthProtocols.join(',')}]', snmpv3PrivProto, true),
+            'enum[${snmpv3PrivProtocols.join(',')}]', snmpv3PrivProto, true),
+        //* @Node snmpv3_securitylevel
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMPv3 Security level. Used only by SNMPv3 items.
+        //*
+        //* @Value enum[noAuthNoPriv,authNoPriv,authPriv]
         'snmpv3_securitylevel' : ZabbixValue.definition('SNMPv3 Security Level',
             'enum[${snmpv3SecurityLevels.join(',')}]', snmpv3Seclvl, true),
+        //* @Node snmpv3_securityname
+        //* @Is zabbixValueNode
+        //* @Parent itemSNMP
+        //*
+        //* SNMPv3 Security name. Used only by SNMPv3 items.
+        //* @Value string
         'snmpv3_securityname' : ZabbixValue.definition('Security name', 'string',
             item['snmpv3_securityname'], true)
       },
+      //* @Node state
+      //* @MetaType itemState
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* State of the item.
+      //*
+      //* String representation of the state of the item.
+      //* Possible values normal, or not supported
+      //*
+      //* @Value string
       'state' : ZabbixValue.definition('State', 'enum[${states.join(',')}]',
           states[int.parse(item['state'])], false),
+      //* @Node status
+      //* @MetaType itemStatus
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Status of the item.
+      //*
+      //* @Value enum[enabled,disabled]
       'status' : ZabbixValue.definition('Status', 'enum[${statuses.join(',')}]',
           statuses[int.parse(item['status'])], true),
+      //* @Node templateid
+      //* @MetaType itemTemplateid
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Id of the parent template item.
+      //* @Value string
       'templateid' : ZabbixValue.definition('Template Id', 'string',
           item['templateid'], false),
+      //* @Node trapper_hosts
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Allowed hosts. Only used by trapper items.
       'trapper_hosts' : ZabbixValue.definition('Trapper allowed hosts', 'string',
           item['trapper_hosts'], true),
+      //* @Node trends
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Number of days to keep item's trends data.
+      //* @Value number
       'trends' : ZabbixValue.definition('Days of trends data', 'number',
           int.parse(item['trends']), true),
+      //* @Node units
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Value units.
+      //* @Value string
       'units' : ZabbixValue.definition('Value units', 'string', item['units'], true),
+      //* @Node username
+      //* @MetaType itemUsername
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Username for authentication.
+      //*
+      //* Username that is required for simple check, SSH, telnet, database
+      //* monitor and JMX items.
+      //*
+      //* @Value string
       'username' : ZabbixValue.definition('Authentication username', 'string',
           item['username'], true),
+      //* @Node valuemapid
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixItem
+      //*
+      //* Id of the associated value map.
+      //* @Value string
       'valuemapid' : ZabbixValue.definition('Map ID', 'string', item['valuemap'], true)
     };
   }

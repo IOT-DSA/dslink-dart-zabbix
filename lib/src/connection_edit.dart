@@ -7,6 +7,27 @@ import 'package:dslink/dslink.dart';
 import 'zabbix_node.dart';
 import 'client.dart';
 
+//* @Action Edit_Connection
+//* @Is editConnectionNode
+//* @Parent ZabbixNode
+//*
+//* Edit the connection details.
+//*
+//* Edit connection updates the connection details and will verify that the new
+//* parameters are able to authenticate against the remote server. On success
+//* the action will update the backing client with the new connection details.
+//*
+//* @Param address string Address is the remote address of the Zabbix Server.
+//* @Param username string Username required to authenticate with the remote server.
+//* @Param password string Password required to authenticate with the remote server.
+//* @Param refreshRate number RefreshRate is the number of seconds between
+//* polling for updates from the remote server.
+//*
+//* @Return value
+//* @Column success bool Success returns true if the action is successful;
+//* false on failure.
+//* @Column message string Message returns Success! if the action is successful;
+//* an error message is return on failure.
 class EditConnection extends SimpleNode {
   static const String isType = 'editConnectionNode';
   static const String pathName = 'Edit_Connection';

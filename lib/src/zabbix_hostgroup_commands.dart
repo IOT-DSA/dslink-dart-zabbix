@@ -8,6 +8,23 @@ import 'package:dslink/utils.dart';
 import 'common.dart';
 import 'client.dart';
 
+//* @Action Rename_Hostgroup
+//* @Is zabbixRenameHostgroup
+//* @Parent ZabbixHostGroup
+//*
+//* Send a request to the server to rename the hostgroup to the name specified.
+//*
+//* Rename Hostgroup will attempt to rename the hostgroup to the specified name.
+//* If the command is successful, it will also update the display name of the
+//* ZabbixHostGroup node.
+//*
+//* @Param name string The name try updating the hostgroup to.
+//*
+//* @Return value
+//* @Column success bool Success is true if the Action succeeds, and false if
+//* the action fails.
+//* @Column message string Message is "Success!" if the action is successful,
+//* and provides an error message if the action failed.
 class RenameHostGroup extends SimpleNode {
   static const String isType = 'zabbixRenameHostgroup';
   static const String pathName = 'Rename_Hostgroup';
@@ -67,6 +84,22 @@ class RenameHostGroup extends SimpleNode {
   }
 }
 
+//* @Action Delete_Hostgroup
+//* @Is zabbixDeleteHostgroup
+//* @Parent ZabbixHostGroup
+//*
+//* Sends a request to the server to remove the hostgroup.
+//*
+//* Delete Hostgroup will request that the server remove the hostgroup.
+//* This command will only be available on any host groups which are not
+//* internal. If the action is successful, it will remote the hostgroup
+//* node from the link.
+//*
+//* @Return value
+//* @Column success bool Success is true if the Action succeeds, and false if
+//* the action fails.
+//* @Column message string Message is "Success!" if the action is successful,
+//* and provides an error message if the action failed.
 class DeleteHostGroup extends SimpleNode {
   static const String isType = 'zabbixDeleteHostgroup';
   static const String pathName = 'Delete_Hostgroup';

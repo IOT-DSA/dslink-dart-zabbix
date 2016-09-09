@@ -10,6 +10,15 @@ import 'client.dart';
 import 'zabbix_node.dart';
 import 'zabbix_hostgroup_commands.dart';
 
+//* @Node
+//* @MetaType ZabbixHostGroup
+//* @Is zabbixHostgroupNode
+//* @Parent HostGroups
+//*
+//* A Host group provided by the server.
+//*
+//* ZabbixHostGroup will have the path of the group ID, and display name of
+//* the group name.
 class ZabbixHostGroup extends ZabbixChild {
   static const String isType = 'zabbixHostgroupNode';
 
@@ -20,7 +29,22 @@ class ZabbixHostGroup extends ZabbixChild {
     var ret = {
       r'$is' : isType,
       r'$name' : hostgroup['name'],
+      //* @Node flags
+      //* @MetaType hgFlags
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixHostGroup
+      //*
+      //* Flags indicate if the hostgroup was plain or discovered.
+      //*
+      //* @Value string
       'flags' : ZabbixValue.definition('Flags', 'string', flags, false),
+      //* @Node internal
+      //* @Is zabbixValueNode
+      //* @Parent ZabbixHostGroup
+      //*
+      //* If the hostgroup is internal only.
+      //*
+      //* @Value bool
       'internal' : ZabbixValue.definition('Internal', 'bool', internal, false),
       RenameHostGroup.pathName : RenameHostGroup.definition(hostgroup['name'])
     };
@@ -49,6 +73,21 @@ class ZabbixHostGroup extends ZabbixChild {
   }
 }
 
+//* @Action Create_Hostgroup
+//* @Is zabbixCreateHostgroup
+//* @Parent HostGroups
+//*
+//* Sends a request to the server to create a new host group.
+//*
+//* Create Host Group will request the server create a new host group with the
+//* specified name.
+//*
+//* @Param name string The name of the host group for the server to create.
+//*
+//* @Return value
+//* @Column success bool Success returns true on success, false on failure.
+//* @Column message string Message returns "Success!" on success, and an error
+//* on failure.
 class CreateHostGroup extends SimpleNode {
   static const String isType = 'zabbixCreateHostgroup';
   static const String pathName = 'Create_Hostgroup';
