@@ -1,17 +1,17 @@
 ```
 - root
- |- @Add_Connection
+ |- @Add_Connection(name, address, username, password, refreshRate)
  |- ZabbixNode
- | |- @Refresh_Hosts
- | |- @Edit_Connection
- | |- @Remove_Connection
+ | |- @Refresh_Hosts()
+ | |- @Edit_Connection(address, username, password, refreshRate)
+ | |- @Remove_Connection()
  | |- HostGroups
- | | |- @Create_Hostgroup
+ | | |- @Create_Hostgroup(name)
  | | |- ZabbixHostGroup
  | | | |- flags
  | | | |- internal
- | | | |- @Rename_Hostgroup
- | | | |- @Delete_Hostgroup
+ | | | |- @Rename_Hostgroup(name)
+ | | | |- @Delete_Hostgroup()
  | | | |- ZabbixHost
  | | | | |- hostId
  | | | | |- available
@@ -127,7 +127,7 @@
  | | | | | | | | |- source
  | | | | | | | | |- value
  | | | | | | | | |- value_changed
- | | | | | | | | |- @Acknowledge_Event
+ | | | | | | | | |- @Acknowledge_Event(message)
  | | | | | | | | |- Alerts
  | | | | | | | | | |- ZabbixAlert
  | | | | | | | | | | |- actionid
@@ -181,8 +181,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true when the action is successful, and false if the action failed. 
-message | `string` | Message is Success! when the action is successful, and provides an error message if the action failed. 
+success | `bool` | Success is true when the action is successful, and false if the action failed.
+message | `string` | Message is Success! when the action is successful, and provides an error message if the action failed.
 
 ---
 
@@ -215,8 +215,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true when the action is successful; return false on failure. 
-message | `string` | Message returns Success! when action is successful; returns an error message on failure. 
+success | `bool` | Success returns true when the action is successful; return false on failure.
+message | `string` | Message returns Success! when action is successful; returns an error message on failure.
 
 ---
 
@@ -245,8 +245,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true if the action is successful; false on failure. 
-message | `string` | Message returns Success! if the action is successful; an error message is return on failure. 
+success | `bool` | Success returns true if the action is successful; false on failure.
+message | `string` | Message returns Success! if the action is successful; an error message is return on failure.
 
 ---
 
@@ -266,8 +266,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true when action completes successfully; false on failure. 
-message | `string` | Message returns Success! when action completes successfully. Returns an error message on failure. 
+success | `bool` | Success is true when action completes successfully; false on failure.
+message | `string` | Message returns Success! when action completes successfully. Returns an error message on failure.
 
 ---
 
@@ -302,8 +302,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true on success, false on failure. 
-message | `string` | Message returns "Success!" on success, and an error on failure. 
+success | `bool` | Success returns true on success, false on failure.
+message | `string` | Message returns "Success!" on success, and an error on failure.
 
 ---
 
@@ -367,8 +367,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true if the Action succeeds, and false if the action fails. 
-message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed. 
+success | `bool` | Success is true if the Action succeeds, and false if the action fails.
+message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed.
 
 ---
 
@@ -388,8 +388,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true if the Action succeeds, and false if the action fails. 
-message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed. 
+success | `bool` | Success is true if the Action succeeds, and false if the action fails.
+message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed.
 
 ---
 
@@ -1900,8 +1900,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success will return true on success; False on failure. 
-resultMessage | `string` | Result message will be Success if the action completes successfully. Otherwise it will provide an error message. 
+success | `bool` | Success will return true on success; False on failure.
+resultMessage | `string` | Result message will be Success if the action completes successfully. Otherwise it will provide an error message.
 
 ---
 
