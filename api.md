@@ -181,8 +181,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true when the action is successful, and false if the action failed.
-message | `string` | Message is Success! when the action is successful, and provides an error message if the action failed.
+success | `bool` | Success is true when the action is successful, and false if the action failed. 
+message | `string` | Message is Success! when the action is successful, and provides an error message if the action failed. 
 
 ---
 
@@ -215,8 +215,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true when the action is successful; return false on failure.
-message | `string` | Message returns Success! when action is successful; returns an error message on failure.
+success | `bool` | Success returns true when the action is successful; return false on failure. 
+message | `string` | Message returns Success! when action is successful; returns an error message on failure. 
 
 ---
 
@@ -245,8 +245,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true if the action is successful; false on failure.
-message | `string` | Message returns Success! if the action is successful; an error message is return on failure.
+success | `bool` | Success returns true if the action is successful; false on failure. 
+message | `string` | Message returns Success! if the action is successful; an error message is return on failure. 
 
 ---
 
@@ -266,8 +266,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true when action completes successfully; false on failure.
-message | `string` | Message returns Success! when action completes successfully. Returns an error message on failure.
+success | `bool` | Success is true when action completes successfully; false on failure. 
+message | `string` | Message returns Success! when action completes successfully. Returns an error message on failure. 
 
 ---
 
@@ -302,8 +302,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true on success, false on failure.
-message | `string` | Message returns "Success!" on success, and an error on failure.
+success | `bool` | Success returns true on success, false on failure. 
+message | `string` | Message returns "Success!" on success, and an error on failure. 
 
 ---
 
@@ -328,7 +328,8 @@ Flags indicate if the hostgroup was plain or discovered.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixHostGroup](#zabbixhostgroup)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -339,7 +340,8 @@ If the hostgroup is internal only.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixHostGroup](#zabbixhostgroup)  
-Value Type: `bool`
+Value Type: `bool`  
+Writable: `never`  
 
 ---
 
@@ -365,8 +367,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true if the Action succeeds, and false if the action fails.
-message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed.
+success | `bool` | Success is true if the Action succeeds, and false if the action fails. 
+message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed. 
 
 ---
 
@@ -386,8 +388,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true if the Action succeeds, and false if the action fails.
-message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed.
+success | `bool` | Success is true if the Action succeeds, and false if the action fails. 
+message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed. 
 
 ---
 
@@ -412,7 +414,8 @@ Id of the host.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixHost](#zabbixhost)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -427,7 +430,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 String representation of the availability of the Zabbix Agent on the host. Values may be Available, Unavailable, or Unknown. Value may not be set.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -438,7 +442,8 @@ Description of host. May be set.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixHost](#zabbixhost)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -449,7 +454,8 @@ Timestamp for the next polling time of an unavailable Zabbix agent.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixHost](#zabbixhost)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -460,7 +466,8 @@ Error text if Zabbix agent on host is unavailable.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixHost](#zabbixhost)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -471,7 +478,8 @@ Timestamp when the Zabbix agent on host became unavailable.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixHost](#zabbixhost)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -486,7 +494,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 A string representation of the origin of the host. Value may be Plain Host or Discovered Host. Value cannot be set.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -500,7 +509,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 IPMI value is a string representation of the availability of the agent. Value may be Available, Unavailable, or Unknown.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -515,7 +525,8 @@ Parent: [IPMI](#ipmi)
 Description:  
 String representation of the authentication algorithm used by the IPMI agent. Value may be set to one of the valid enum values.  
 
-Value Type: `enum[default,none,MD2,MD5,straight,OEM,RMCP+]`
+Value Type: `enum[default,none,MD2,MD5,straight,OEM,RMCP+]`  
+Writable: `write`  
 
 ---
 
@@ -526,7 +537,8 @@ Timestamp for the next polling time of an unavailable IPMI agent.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [IPMI](#ipmi)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -537,7 +549,8 @@ Error text if IPMI agent is unavailable.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [IPMI](#ipmi)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -552,7 +565,8 @@ Parent: [IPMI](#ipmi)
 Description:  
 The IPMI Password is used for the server to authenticate with IPMI. This value may be set to update it on the remote server.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -567,7 +581,8 @@ Parent: [IPMI](#ipmi)
 Description:  
 This is the string representation of IPMI priviledge level on the server. This value may be modified with one of the enum values.  
 
-Value Type: `enum[callback,user,operator,admin,OEM]`
+Value Type: `enum[callback,user,operator,admin,OEM]`  
+Writable: `write`  
 
 ---
 
@@ -582,7 +597,8 @@ Parent: [IPMI](#ipmi)
 Description:  
 The IPMI Username is used for the server to authenticate with IPMI. This value may be set to update it on the remote server.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -596,7 +612,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 JMX value is a string representation of the availability of JMX agent. Value may be Available, Unavailable, or Unknown.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -607,7 +624,8 @@ Timestamp value of the next polling time of an unavailable JMX agent.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [JMX](#jmx)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -618,7 +636,8 @@ Error text if the JMX agent is unavailable.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [JMX](#jmx)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -629,7 +648,8 @@ Timestamp value of when the JMX agent became unavailable.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [JMX](#jmx)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -639,7 +659,8 @@ The ID of the maintenance that is currently in effect on the host.
 
 Type: Node   
 Parent: [ZabbixHost](#zabbixhost)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -650,7 +671,8 @@ Timestamp of the starting time of the effective maintenance.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [maintenanceid](#maintenanceid)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -665,7 +687,8 @@ Parent: [maintenanceid](#maintenanceid)
 Description:  
 This is a string representation of the current maintenance status. Value may be No Maintenance or In effect.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -680,7 +703,8 @@ Parent: [maintenanceid](#maintenanceid)
 Description:  
 Maintenance Type is a string representation of the current maintenance type. Value may be With data collection or Without data collection.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -695,7 +719,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 This value may be updated to update host configuration on the remote server. Successful update will also update the display name of this ZabbixHost node.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -710,7 +735,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 The value of this field can be updated to change the proxy used for monitoring this host.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -724,7 +750,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 The value of this field indicates if SNMP functionality for this host is Available, Unavailable or Unknown.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -735,7 +762,8 @@ Timestamp of the next polling time of an unavailable SNMP agent.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [SNMP](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -746,7 +774,8 @@ Error text if SNMP is unavailable.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [SNMP](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -757,7 +786,8 @@ Timestamp when the SNMP agent became unavailable.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [SNMP](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -772,7 +802,8 @@ Parent: [ZabbixHost](#zabbixhost)
 Description:  
 Status may be @set to disable or enable monitoring of this host.  
 
-Value Type: `enum[Monitored,Unmonitored]`
+Value Type: `enum[Monitored,Unmonitored]`  
+Writable: `write`  
 
 ---
 
@@ -805,7 +836,8 @@ Id of the Item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -816,7 +848,8 @@ Update interval of the item in seconds.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `write`  
 
 ---
 
@@ -827,7 +860,8 @@ Id of the host the item belongs to.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -838,7 +872,8 @@ Id of the item's host interface. Only for host items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -849,7 +884,8 @@ Item key
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -860,7 +896,8 @@ Name of the item
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -875,7 +912,8 @@ Parent: [ZabbixItem](#zabbixitem)
 Description:  
 String representation of the type of the item. Can be set to an enum value.  
 
-Value Type: `enum[Zabbix Agent,SNMPv1 Agent,Zabbix Trapper,Simple Check,SNMPv2 Agent,Zabbix Internal,SNMPv3 Agent,Zabbix Agent (active),Zabbix Aggregate,Web Item,External Clock,Database Monitor,IPMI Agent,SSH Agent,Telnet Agent,Calculated,JMX Agent,SNMP Trap]`
+Value Type: `enum[Zabbix Agent,SNMPv1 Agent,Zabbix Trapper,Simple Check,SNMPv2 Agent,Zabbix Internal,SNMPv3 Agent,Zabbix Agent (active),Zabbix Aggregate,Web Item,External Clock,Database Monitor,IPMI Agent,SSH Agent,Telnet Agent,Calculated,JMX Agent,SNMP Trap]`  
+Writable: `write`  
 
 ---
 
@@ -890,7 +928,8 @@ Parent: [ZabbixItem](#zabbixitem)
 Description:  
 Value type is the type of information that is contained in the value. Can be set to one of the enum values.  
 
-Value Type: `enum[Numeric float,Character,Log,Numeric unsigned,text]`
+Value Type: `enum[Numeric float,Character,Log,Numeric unsigned,text]`  
+Writable: `write`  
 
 ---
 
@@ -901,7 +940,8 @@ SSH authentication method. Used only by SSH agent items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `enum[password,public key]`
+Value Type: `enum[password,public key]`  
+Writable: `write`  
 
 ---
 
@@ -912,7 +952,8 @@ Data type of the item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `enum[decimal,octal,hexadecimal,boolean]`
+Value Type: `enum[decimal,octal,hexadecimal,boolean]`  
+Writable: `write`  
 
 ---
 
@@ -923,7 +964,8 @@ Flexible intervals as a serialized string
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -934,7 +976,8 @@ Value that will be stored.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `enum[as is,Delta (speed per second),Delta (simple change)]`
+Value Type: `enum[as is,Delta (speed per second),Delta (simple change)]`  
+Writable: `write`  
 
 ---
 
@@ -945,7 +988,8 @@ Description of the item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -956,7 +1000,8 @@ Error text if there are problems updating the item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -971,7 +1016,8 @@ Parent: [ZabbixItem](#zabbixitem)
 Description:  
 A string representation of the origin of the time. Possible values are Plain Item or Discovered Item.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -982,7 +1028,8 @@ Custom multipler
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `write`  
 
 ---
 
@@ -993,7 +1040,8 @@ Number of days to keep the item's history.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `write`  
 
 ---
 
@@ -1004,7 +1052,8 @@ Id of the host inventory field that is populated by the item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `write`  
 
 ---
 
@@ -1015,7 +1064,8 @@ IPMI sensor. Used only by IPMI items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1026,7 +1076,8 @@ Timestamp when the item was last updated.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1037,7 +1088,8 @@ Nanoseconds when the item was last updated.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `never`  
 
 ---
 
@@ -1048,7 +1100,8 @@ Last value of the item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1059,7 +1112,8 @@ Format of the time in log entries. Only used by log items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1070,7 +1124,8 @@ Time when the monitored log file was last updated.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1081,7 +1136,8 @@ Whether to use a custom multiplier
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `write`  
 
 ---
 
@@ -1096,7 +1152,8 @@ Parent: [ZabbixItem](#zabbixitem)
 Description:  
 Parameters may be executed scripts for SSH/Telnet items; SQL query for database monitor items; or formula for calculated items.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1111,7 +1168,8 @@ Parent: [ZabbixItem](#zabbixitem)
 Description:  
 Password that is required for simple check, SSH, telnet, database monitor and JMX items.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1122,7 +1180,8 @@ Port monitored by the item. Used only by SNMP items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1133,7 +1192,8 @@ Previous value of the item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1144,7 +1204,8 @@ Name of the private key file.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1155,7 +1216,8 @@ Name of the public key file.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1175,7 +1237,8 @@ SNMP community. Used only by SNMPv1 an SNMPv2 items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1186,7 +1249,8 @@ SNMP OID to query.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1197,7 +1261,8 @@ SNMPv3 auth passphrase. Used only by SNMPv3 items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1208,7 +1273,8 @@ SNMPv3 auth protocol. Used only by SNMPv3 items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `enum[MD5,SHA]`
+Value Type: `enum[MD5,SHA]`  
+Writable: `write`  
 
 ---
 
@@ -1219,7 +1285,8 @@ SNMPv3 context name. Used only by SNMPv3 items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1230,7 +1297,8 @@ SNMPv3 priv passphrase. Used only by SNMPv3 items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1241,7 +1309,8 @@ SNMPv3 privacy protocol.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `enum[DES,AES]`
+Value Type: `enum[DES,AES]`  
+Writable: `write`  
 
 ---
 
@@ -1252,7 +1321,8 @@ SNMPv3 Security level. Used only by SNMPv3 items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `enum[noAuthNoPriv,authNoPriv,authPriv]`
+Value Type: `enum[noAuthNoPriv,authNoPriv,authPriv]`  
+Writable: `write`  
 
 ---
 
@@ -1263,7 +1333,8 @@ SNMPv3 Security name. Used only by SNMPv3 items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [snmp](#snmp)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1278,7 +1349,8 @@ Parent: [ZabbixItem](#zabbixitem)
 Description:  
 String representation of the state of the item. Possible values normal, or not supported  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1289,7 +1361,8 @@ Status of the item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `enum[enabled,disabled]`
+Value Type: `enum[enabled,disabled]`  
+Writable: `write`  
 
 ---
 
@@ -1300,7 +1373,8 @@ Id of the parent template item.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1311,6 +1385,8 @@ Allowed hosts. Only used by trapper items.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1321,7 +1397,8 @@ Number of days to keep item's trends data.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `write`  
 
 ---
 
@@ -1332,7 +1409,8 @@ Value units.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1347,7 +1425,8 @@ Parent: [ZabbixItem](#zabbixitem)
 Description:  
 Username that is required for simple check, SSH, telnet, database monitor and JMX items.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1358,7 +1437,8 @@ Id of the associated value map.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixItem](#zabbixitem)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1382,7 +1462,8 @@ Parent: [Triggers](#triggers)
 Description:  
 Zabbix Triggers are the definition of an event which make cause an Event or Alert to happen. The path name is the trigger Id and the display name is the short description given to the trigger. The value is the current state of the trigger and may be Ok, or Problem  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1393,7 +1474,8 @@ Id of the trigger on the remote server.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixTrigger](#zabbixtrigger)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1404,7 +1486,8 @@ Name of the trigger. Value may be set.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixTrigger](#zabbixtrigger)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1415,7 +1498,8 @@ Reduced trigger expression. May be set.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixTrigger](#zabbixtrigger)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1426,7 +1510,8 @@ Additional comments to the trigger. Value may be set.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixTrigger](#zabbixtrigger)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1441,7 +1526,8 @@ Parent: [ZabbixTrigger](#zabbixtrigger)
 Description:  
 If an error occurred when updating the state of the trigger, the error text will appear here. Cannot be set.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1456,7 +1542,8 @@ Parent: [ZabbixTrigger](#zabbixtrigger)
 Description:  
 Indicate the origin of the trigger. Value may be plain or discovered.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1467,7 +1554,8 @@ Timestamp indicating when the trigger last changed its state.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixTrigger](#zabbixtrigger)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1482,7 +1570,8 @@ Parent: [ZabbixTrigger](#zabbixtrigger)
 Description:  
 Priority is the string representation of the priority level of the trigger. May be modified as one of the enum values.  
 
-Value Type: `enum[not classified,information,warning,average,high,disaster]`
+Value Type: `enum[not classified,information,warning,average,high,disaster]`  
+Writable: `write`  
 
 ---
 
@@ -1497,7 +1586,8 @@ Parent: [ZabbixTrigger](#zabbixtrigger)
 Description:  
 State is the string representation of the trigger's current state. Possible values are Up to date, Unknown.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1512,7 +1602,8 @@ Parent: [ZabbixTrigger](#zabbixtrigger)
 Description:  
 The enum values may be used to change the current state of the trigger.  
 
-Value Type: `enum[enabled,disabled]`
+Value Type: `enum[enabled,disabled]`  
+Writable: `write`  
 
 ---
 
@@ -1523,7 +1614,8 @@ Id of the parent template trigger.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixTrigger](#zabbixtrigger)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1538,7 +1630,8 @@ Parent: [ZabbixTrigger](#zabbixtrigger)
 Description:  
 The enum values may be set and used to change if the trigger can generate multiple problem events.  
 
-Value Type: `enum[single event,multple events]`
+Value Type: `enum[single event,multple events]`  
+Writable: `write`  
 
 ---
 
@@ -1549,7 +1642,8 @@ The Url associated with the trigger. May be set.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixTrigger](#zabbixtrigger)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `write`  
 
 ---
 
@@ -1583,7 +1677,8 @@ Id of the event
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixEvent](#zabbixevent)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1593,7 +1688,8 @@ Total number of acknowledgements on this event.
 
 Type: Node   
 Parent: [ZabbixEvent](#zabbixevent)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `never`  
 
 ---
 
@@ -1625,7 +1721,8 @@ User who acknowledged the event. Display name is User ID. The value is the user'
 
 Type: Node   
 Parent: [ZabbixAcknowledgement](#zabbixacknowledgement)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1636,7 +1733,8 @@ Alias for the user.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [userid](#userid)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1647,7 +1745,8 @@ The user's first name.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [userid](#userid)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1658,7 +1757,8 @@ The user's surname (last name).
 Type: Node   
 $is: zabbixValueNode   
 Parent: [userid](#userid)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1669,7 +1769,8 @@ Timestamp of the acknowledged time.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAcknowledgement](#zabbixacknowledgement)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1680,7 +1781,8 @@ Message which accompanies the acknowledgement.
 Type: Node   
 $is: zabbixNodeValue   
 Parent: [ZabbixAcknowledgement](#zabbixacknowledgement)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1691,7 +1793,8 @@ Timestamp of when the event was created.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixEvent](#zabbixevent)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1702,7 +1805,8 @@ Nanosecond timestamp of when the event was created.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixEvent](#zabbixevent)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1717,7 +1821,8 @@ Parent: [ZabbixEvent](#zabbixevent)
 Description:  
 String representation of the type of object for this event. The value will vary depending on the event type.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1728,7 +1833,8 @@ Id of the object related to this event.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixEvent](#zabbixevent)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1739,7 +1845,8 @@ The type of event.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixEvent](#zabbixevent)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1754,7 +1861,8 @@ Parent: [ZabbixEvent](#zabbixevent)
 Description:  
 The value of the event is the string representation of the status of the object related to the event. This will vary depending on the type of event generated.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1765,7 +1873,8 @@ Value changed is the number of times the event's value has updated.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixEvent](#zabbixevent)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `never`  
 
 ---
 
@@ -1791,8 +1900,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success will return true on success; False on failure.
-resultMessage | `string` | Result message will be Success if the action completes successfully. Otherwise it will provide an error message.
+success | `bool` | Success will return true on success; False on failure. 
+resultMessage | `string` | Result message will be Success if the action completes successfully. Otherwise it will provide an error message. 
 
 ---
 
@@ -1826,7 +1935,8 @@ Id of the action that generated the alert.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1837,7 +1947,8 @@ Type of alert. Values are message or remote command.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1848,7 +1959,8 @@ Timestamp of when the alert was generated
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1859,7 +1971,8 @@ Error text if there are issues sending a message or running a command.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1870,7 +1983,8 @@ Escalation step during which the alert was generated.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `never`  
 
 ---
 
@@ -1881,7 +1995,8 @@ Id of the event that triggered the action.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1892,7 +2007,8 @@ Id of the media type used to send the message.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1913,7 +2029,8 @@ Number of times remote Zabbix server tried to send the message.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `number`
+Value Type: `number`  
+Writable: `never`  
 
 ---
 
@@ -1924,7 +2041,8 @@ Address, username, or identifier of the recipient for message alerts.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1939,7 +2057,8 @@ Parent: [ZabbixAlert](#zabbixalert)
 Description:  
 Status is a string representation of the status of the action operation. This will vary depending on the alert type.  
 
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -1950,7 +2069,8 @@ Message subject used for message alerts.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
-Value Type: `string`
+Value Type: `string`  
+Writable: `never`  
 
 ---
 

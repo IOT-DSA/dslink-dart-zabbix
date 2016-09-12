@@ -69,7 +69,7 @@ class ZabbixTrigger extends ZabbixChild {
       //*
       //* Name of the trigger. Value may be set.
       //*
-      //* @Value string
+      //* @Value string write
       'description' : ZabbixValue.definition('Description', 'string',
           trigger['description'], true),
       //* @Node expression
@@ -78,7 +78,7 @@ class ZabbixTrigger extends ZabbixChild {
       //*
       //* Reduced trigger expression. May be set.
       //*
-      //* @Value string
+      //* @Value string write
       'expression' : ZabbixValue.definition('Expression', 'string',
           trigger['expression'], true),
       //* @Node comments
@@ -87,7 +87,7 @@ class ZabbixTrigger extends ZabbixChild {
       //*
       //* Additional comments to the trigger. Value may be set.
       //*
-      //* @Value string
+      //* @Value string write
       'comments' : ZabbixValue.definition('Comments', 'string',
           trigger['comments'], true),
       //* @Node error
@@ -132,7 +132,7 @@ class ZabbixTrigger extends ZabbixChild {
       //* Priority is the string representation of the priority level of the
       //* trigger. May be modified as one of the enum values.
       //*
-      //* @Value enum[not classified,information,warning,average,high,disaster]
+      //* @Value enum[not classified,information,warning,average,high,disaster] write
       'priority' : ZabbixValue.definition('Priority',
           'enum[${_priorities.join(',')}]', priority, true),
       //* @Node state
@@ -156,7 +156,7 @@ class ZabbixTrigger extends ZabbixChild {
       //* The enum values may be used to change the current
       //* state of the trigger.
       //*
-      //* @Value enum[enabled,disabled]
+      //* @Value enum[enabled,disabled] write
       'status' : ZabbixValue.definition('Status', 'enum[${_statuses.join(',')}]',
           status, true),
       //* @Node templateid
@@ -178,7 +178,7 @@ class ZabbixTrigger extends ZabbixChild {
       //* The enum values may be set and used to change if the trigger can
       //* generate multiple problem events.
       //*
-      //* @Value enum[single event,multple events]
+      //* @Value enum[single event,multple events] write
       'type' : ZabbixValue.definition('Type', 'enum[${_types.join(',')}]', type,
           true),
       //* @Node url
@@ -188,7 +188,7 @@ class ZabbixTrigger extends ZabbixChild {
       //*
       //* The Url associated with the trigger. May be set.
       //*
-      //* @Value string
+      //* @Value string write
       'url' : ZabbixValue.definition('Url', 'string', trigger['url'], true)
     };
     return ret;

@@ -78,7 +78,7 @@ class ZabbixHost extends ZabbixChild {
       //*
       //* Description of host. May be set.
       //*
-      //* @Value string
+      //* @Value string write
       'description' : ZabbixValue.definition('Description', 'string',
                         host['description'], true),
       //* @Node disable_until
@@ -141,7 +141,7 @@ class ZabbixHost extends ZabbixChild {
         //* String representation of the authentication algorithm used by the
         //* IPMI agent. Value may be set to one of the valid enum values.
         //*
-        //* @Value enum[default,none,MD2,MD5,straight,OEM,RMCP+]
+        //* @Value enum[default,none,MD2,MD5,straight,OEM,RMCP+] write
         'ipmi_authtype' : ZabbixValue.definition('IPMI Authentication',
             'enum[$authTypeEnum]', ipmiAuth, true),
         //* @Node ipmi_disable_until
@@ -171,7 +171,7 @@ class ZabbixHost extends ZabbixChild {
         //* The IPMI Password is used for the server to authenticate with IPMI.
         //* This value may be set to update it on the remote server.
         //*
-        //* @Value string
+        //* @Value string write
         'ipmi_password' : ZabbixValue.definition('IPMI Password', 'string',
             host['ipmi_password'], true),
         //* @Node ipmi_privlege
@@ -183,7 +183,7 @@ class ZabbixHost extends ZabbixChild {
         //* This is the string representation of IPMI priviledge level on the
         //* server. This value may be modified with one of the enum values.
         //*
-        //* @Value enum[callback,user,operator,admin,OEM]
+        //* @Value enum[callback,user,operator,admin,OEM] write
         'ipmi_privlege' : ZabbixValue.definition('IPMI Privlege Level',
             'enum[callback,user,operator,admin,OEM]',
             ipmiPriv, true),
@@ -196,7 +196,7 @@ class ZabbixHost extends ZabbixChild {
         //* The IPMI Username is used for the server to authenticate with IPMI.
         //* This value may be set to update it on the remote server.
         //*
-        //* @Value string
+        //* @Value string write
         'ipmi_username' : ZabbixValue.definition('IPMI Username', 'string',
             host['ipmi_username'], true)
       },
@@ -295,7 +295,7 @@ class ZabbixHost extends ZabbixChild {
       //* server. Successful update will also update the display name of this
       //* ZabbixHost node.
       //*
-      //* @Value string
+      //* @Value string write
       'name' : ZabbixValue.definition('name', 'string', host['name'], true),
       //* @Node proxy_hostid
       //* @Is zabbixValueNode
@@ -306,7 +306,7 @@ class ZabbixHost extends ZabbixChild {
       //* The value of this field can be updated to change the proxy used for
       //* monitoring this host.
       //*
-      //* @Value string
+      //* @Value string write
       'proxy_hostid' : ZabbixValue.definition('Proxy Host ID', 'string',
             host['proxy_hostid'], true),
       //* @Node SNMP
@@ -357,7 +357,7 @@ class ZabbixHost extends ZabbixChild {
       //*
       //* Status may be @set to disable or enable monitoring of this host.
       //*
-      //* @Value enum[Monitored,Unmonitored]
+      //* @Value enum[Monitored,Unmonitored] write
       'status' : ZabbixValue.definition('Status', 'enum[${_statuses.join(',')}]',
           status, true)
     };
