@@ -100,6 +100,7 @@ class ZabbixAlert extends ZabbixChild {
       //* @Parent ZabbixAlert
       //*
       //* Message text used in message alerts.
+      //* @Value string
       'message' : ZabbixValue.definition('Message', 'string', alert['message'], false),
       //* @Node retries
       //* @Is zabbixValueNode
@@ -141,6 +142,7 @@ class ZabbixAlert extends ZabbixChild {
       //* @Parent ZabbixAlert
       //*
       //* Id of the user the message was sent to.
+      //* @Value string
       'userid' : ZabbixValue.definition('User Id', 'string', alert['userid'], false)
     };
   }

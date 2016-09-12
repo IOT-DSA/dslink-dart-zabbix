@@ -3,8 +3,8 @@
  |-[@Add_Connection(name, address, username, password, refreshRate)](#add_connection)
  |-[ZabbixNode](#zabbixnode)
  | |-[@Refresh_Hosts()](#refresh_hosts)
- | |-[@Edit_Connection(address, username, password, refreshRate)](#edit_connection)
  | |-[@Remove_Connection()](#remove_connection)
+ | |-[@Edit_Connection(address, username, password, refreshRate)](#edit_connection)
  | |-[HostGroups](#hostgroups)
  | | |-[@Create_Hostgroup(name)](#create_hostgroup)
  | | |-[ZabbixHostGroup](#zabbixhostgroup)
@@ -137,12 +137,12 @@
  | | | | | | | | | | |-[esc_step](#esc_step) - number
  | | | | | | | | | | |-[eventid](#eventid) - string
  | | | | | | | | | | |-[mediatypeid](#mediatypeid) - string
- | | | | | | | | | | |-[message](#message)
+ | | | | | | | | | | |-[message](#message) - string
  | | | | | | | | | | |-[retries](#retries) - number
  | | | | | | | | | | |-[sendto](#sendto) - string
  | | | | | | | | | | |-[status](#status) - string
  | | | | | | | | | | |-[subject](#subject) - string
- | | | | | | | | | | |-[userid](#userid)
+ | | | | | | | | | | |-[userid](#userid) - string
  </pre>
 
 ---
@@ -181,8 +181,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true when the action is successful, and false if the action failed.
-message | `string` | Message is Success! when the action is successful, and provides an error message if the action failed.
+success | `bool` | Success is true when the action is successful, and false if the action failed. 
+message | `string` | Message is Success! when the action is successful, and provides an error message if the action failed. 
 
 ---
 
@@ -215,8 +215,29 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true when the action is successful; return false on failure.
-message | `string` | Message returns Success! when action is successful; returns an error message on failure.
+success | `bool` | Success returns true when the action is successful; return false on failure. 
+message | `string` | Message returns Success! when action is successful; returns an error message on failure. 
+
+---
+
+### Remove_Connection  
+
+Remove the connection to the remote server.  
+
+Type: Action   
+$is: remoteConnectionNode   
+Parent: [ZabbixNode](#zabbixnode)  
+
+Description:  
+Removes the Zabbix server from the link and closes the connection to the remote server. This action should not fail.  
+
+Return type: value   
+Columns:  
+
+Name | Type | Description
+--- | --- | ---
+success | `bool` | Success is true when action completes successfully; false on failure. 
+message | `string` | Message returns Success! when action completes successfully. Returns an error message on failure. 
 
 ---
 
@@ -245,29 +266,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true if the action is successful; false on failure.
-message | `string` | Message returns Success! if the action is successful; an error message is return on failure.
-
----
-
-### Remove_Connection  
-
-Remove the connection to the remote server.  
-
-Type: Action   
-$is: remoteConnectionNode   
-Parent: [ZabbixNode](#zabbixnode)  
-
-Description:  
-Removes the Zabbix server from the link and closes the connection to the remote server. This action should not fail.  
-
-Return type: value   
-Columns:  
-
-Name | Type | Description
---- | --- | ---
-success | `bool` | Success is true when action completes successfully; false on failure.
-message | `string` | Message returns Success! when action completes successfully. Returns an error message on failure.
+success | `bool` | Success returns true if the action is successful; false on failure. 
+message | `string` | Message returns Success! if the action is successful; an error message is return on failure. 
 
 ---
 
@@ -302,8 +302,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success returns true on success, false on failure.
-message | `string` | Message returns "Success!" on success, and an error on failure.
+success | `bool` | Success returns true on success, false on failure. 
+message | `string` | Message returns "Success!" on success, and an error on failure. 
 
 ---
 
@@ -367,8 +367,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true if the Action succeeds, and false if the action fails.
-message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed.
+success | `bool` | Success is true if the Action succeeds, and false if the action fails. 
+message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed. 
 
 ---
 
@@ -388,8 +388,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success is true if the Action succeeds, and false if the action fails.
-message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed.
+success | `bool` | Success is true if the Action succeeds, and false if the action fails. 
+message | `string` | Message is "Success!" if the action is successful, and provides an error message if the action failed. 
 
 ---
 
@@ -1900,8 +1900,8 @@ Columns:
 
 Name | Type | Description
 --- | --- | ---
-success | `bool` | Success will return true on success; False on failure.
-resultMessage | `string` | Result message will be Success if the action completes successfully. Otherwise it will provide an error message.
+success | `bool` | Success will return true on success; False on failure. 
+resultMessage | `string` | Result message will be Success if the action completes successfully. Otherwise it will provide an error message. 
 
 ---
 
@@ -2019,6 +2019,8 @@ Message text used in message alerts.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
+Value Type: `string`  
+Writable: `never`  
 
 ---
 
@@ -2081,5 +2083,7 @@ Id of the user the message was sent to.
 Type: Node   
 $is: zabbixValueNode   
 Parent: [ZabbixAlert](#zabbixalert)  
+Value Type: `string`  
+Writable: `never`  
 
 ---
