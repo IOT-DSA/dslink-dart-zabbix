@@ -1,4 +1,4 @@
-<pre>
+```
 - [root](#root)
  |- @Add_Connection(name, address, username, password, refreshRate)
  |- ZabbixNode
@@ -143,7 +143,7 @@
  | | | | | | | | | | |- status
  | | | | | | | | | | |- subject
  | | | | | | | | | | |- userid
-</pre>
+```
 
 ---
 
