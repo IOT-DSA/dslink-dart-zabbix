@@ -1,5 +1,5 @@
  <pre>
-- [root](#root)
+-[root](#root)
  |- @Add_Connection(name, address, username, password, refreshRate)
  |- ZabbixNode
  | |- @Refresh_Hosts()
