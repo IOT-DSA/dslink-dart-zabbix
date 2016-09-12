@@ -1,148 +1,148 @@
  <pre>
 -[root](#root)
- |- @Add_Connection(name, address, username, password, refreshRate)
- |- ZabbixNode
- | |- @Refresh_Hosts()
- | |- @Edit_Connection(address, username, password, refreshRate)
- | |- @Remove_Connection()
- | |- HostGroups
- | | |- @Create_Hostgroup(name)
- | | |- ZabbixHostGroup
- | | | |- flags
- | | | |- internal
- | | | |- @Rename_Hostgroup(name)
- | | | |- @Delete_Hostgroup()
- | | | |- ZabbixHost
- | | | | |- hostId
- | | | | |- available
- | | | | |- description
- | | | | |- disable_until
- | | | | |- error
- | | | | |- error_from
- | | | | |- flags
- | | | | |- IPMI
- | | | | | |- ipmi_authtype
- | | | | | |- ipmi_disable_until
- | | | | | |- ipmi_error
- | | | | | |- ipmi_password
- | | | | | |- ipmi_privlege
- | | | | | |- ipmi_username
- | | | | |- JMX
- | | | | | |- jmx_disable_until
- | | | | | |- jmx_error
- | | | | | |- jmx_error_from
- | | | | |- maintenanceid
- | | | | | |- maintenance_from
- | | | | | |- maintenance_status
- | | | | | |- maintenance_type
- | | | | |- name
- | | | | |- proxy_hostid
- | | | | |- SNMP
- | | | | | |- snmp_disable_until
- | | | | | |- snmp_error
- | | | | | |- snmp_errors_from
- | | | | |- status
- | | | | |- Items
- | | | | | |- ZabbixItem
- | | | | | | |- itemid
- | | | | | | |- delay
- | | | | | | |- hostid
- | | | | | | |- interfaceid
- | | | | | | |- key
- | | | | | | |- name
- | | | | | | |- type
- | | | | | | |- value_type
- | | | | | | |- authtype
- | | | | | | |- data_type
- | | | | | | |- delay_flex
- | | | | | | |- delta
- | | | | | | |- description
- | | | | | | |- error
- | | | | | | |- flags
- | | | | | | |- formula
- | | | | | | |- history
- | | | | | | |- inventory_link
- | | | | | | |- ipmi_sensor
- | | | | | | |- lastclock
- | | | | | | |- lastns
- | | | | | | |- lastvalue
- | | | | | | |- logtimefmt
- | | | | | | |- mtime
- | | | | | | |- multiplier
- | | | | | | |- params
- | | | | | | |- password
- | | | | | | |- port
- | | | | | | |- prevvalue
- | | | | | | |- privatekey
- | | | | | | |- publickey
- | | | | | | |- snmp
- | | | | | | | |- snmp_community
- | | | | | | | |- snmp_oid
- | | | | | | | |- snmpv3_authpassphrase
- | | | | | | | |- snmpv3_authprotocol
- | | | | | | | |- snmpv3_contextname
- | | | | | | | |- snmpv3_privpassphrase
- | | | | | | | |- snmpv3_privprotocol
- | | | | | | | |- snmpv3_securitylevel
- | | | | | | | |- snmpv3_securityname
- | | | | | | |- state
- | | | | | | |- status
- | | | | | | |- templateid
- | | | | | | |- trapper_hosts
- | | | | | | |- trends
- | | | | | | |- units
- | | | | | | |- username
- | | | | | | |- valuemapid
- | | | | |- Triggers
- | | | | | |- ZabbixTrigger
- | | | | | | |- triggerId
- | | | | | | |- description
- | | | | | | |- expression
- | | | | | | |- comments
- | | | | | | |- error
- | | | | | | |- flags
- | | | | | | |- lastchange
- | | | | | | |- priority
- | | | | | | |- state
- | | | | | | |- status
- | | | | | | |- templateid
- | | | | | | |- type
- | | | | | | |- url
- | | | | | | |- Events
- | | | | | | | |- ZabbixEvent
- | | | | | | | | |- eventid
- | | | | | | | | |- acknowledged
- | | | | | | | | | |- Acknowledgements
- | | | | | | | | | | |- ZabbixAcknowledgement
- | | | | | | | | | | | |- userid
- | | | | | | | | | | | | |- alias
- | | | | | | | | | | | | |- name
- | | | | | | | | | | | | |- surname
- | | | | | | | | | | | |- clock
- | | | | | | | | | | | |- message
- | | | | | | | | |- clock
- | | | | | | | | |- ns
- | | | | | | | | |- object
- | | | | | | | | |- objectid
- | | | | | | | | |- source
- | | | | | | | | |- value
- | | | | | | | | |- value_changed
- | | | | | | | | |- @Acknowledge_Event(message)
- | | | | | | | | |- Alerts
- | | | | | | | | | |- ZabbixAlert
- | | | | | | | | | | |- actionid
- | | | | | | | | | | |- alerttype
- | | | | | | | | | | |- clock
- | | | | | | | | | | |- error
- | | | | | | | | | | |- esc_step
- | | | | | | | | | | |- eventid
- | | | | | | | | | | |- mediatypeid
- | | | | | | | | | | |- message
- | | | | | | | | | | |- retries
- | | | | | | | | | | |- sendto
- | | | | | | | | | | |- status
- | | | | | | | | | | |- subject
- | | | | | | | | | | |- userid
+ |-[@Add_Connection(name, address, username, password, refreshRate)](#add_connection)
+ |-[ZabbixNode](#zabbixnode)
+ | |-[@Refresh_Hosts()](#refresh_hosts)
+ | |-[@Edit_Connection(address, username, password, refreshRate)](#edit_connection)
+ | |-[@Remove_Connection()](#remove_connection)
+ | |-[HostGroups](#hostgroups)
+ | | |-[@Create_Hostgroup(name)](#create_hostgroup)
+ | | |-[ZabbixHostGroup](#zabbixhostgroup)
+ | | | |-[flags](#flags) - string
+ | | | |-[internal](#internal) - bool
+ | | | |-[@Rename_Hostgroup(name)](#rename_hostgroup)
+ | | | |-[@Delete_Hostgroup()](#delete_hostgroup)
+ | | | |-[ZabbixHost](#zabbixhost)
+ | | | | |-[hostId](#hostid) - string
+ | | | | |-[available](#available) - string
+ | | | | |-[description](#description) - string
+ | | | | |-[disable_until](#disable_until) - string
+ | | | | |-[error](#error) - string
+ | | | | |-[error_from](#error_from) - string
+ | | | | |-[flags](#flags) - string
+ | | | | |-[IPMI](#ipmi) - string
+ | | | | | |-[ipmi_authtype](#ipmi_authtype) - enum[default,none,MD2,MD5,straight,OEM,RMCP+]
+ | | | | | |-[ipmi_disable_until](#ipmi_disable_until) - string
+ | | | | | |-[ipmi_error](#ipmi_error) - string
+ | | | | | |-[ipmi_password](#ipmi_password) - string
+ | | | | | |-[ipmi_privlege](#ipmi_privlege) - enum[callback,user,operator,admin,OEM]
+ | | | | | |-[ipmi_username](#ipmi_username) - string
+ | | | | |-[JMX](#jmx) - string
+ | | | | | |-[jmx_disable_until](#jmx_disable_until) - string
+ | | | | | |-[jmx_error](#jmx_error) - string
+ | | | | | |-[jmx_error_from](#jmx_error_from) - string
+ | | | | |-[maintenanceid](#maintenanceid) - string
+ | | | | | |-[maintenance_from](#maintenance_from) - string
+ | | | | | |-[maintenance_status](#maintenance_status) - string
+ | | | | | |-[maintenance_type](#maintenance_type) - string
+ | | | | |-[name](#name) - string
+ | | | | |-[proxy_hostid](#proxy_hostid) - string
+ | | | | |-[SNMP](#snmp) - string
+ | | | | | |-[snmp_disable_until](#snmp_disable_until) - string
+ | | | | | |-[snmp_error](#snmp_error) - string
+ | | | | | |-[snmp_errors_from](#snmp_errors_from) - string
+ | | | | |-[status](#status) - enum[Monitored,Unmonitored]
+ | | | | |-[Items](#items)
+ | | | | | |-[ZabbixItem](#zabbixitem)
+ | | | | | | |-[itemid](#itemid) - string
+ | | | | | | |-[delay](#delay) - number
+ | | | | | | |-[hostid](#hostid) - string
+ | | | | | | |-[interfaceid](#interfaceid) - string
+ | | | | | | |-[key](#key) - string
+ | | | | | | |-[name](#name) - string
+ | | | | | | |-[type](#type) - enum[Zabbix Agent,SNMPv1 Agent,Zabbix Trapper,Simple Check,SNMPv2 Agent,Zabbix Internal,SNMPv3 Agent,Zabbix Agent (active),Zabbix Aggregate,Web Item,External Clock,Database Monitor,IPMI Agent,SSH Agent,Telnet Agent,Calculated,JMX Agent,SNMP Trap]
+ | | | | | | |-[value_type](#value_type) - enum[Numeric float,Character,Log,Numeric unsigned,text]
+ | | | | | | |-[authtype](#authtype) - enum[password,public key]
+ | | | | | | |-[data_type](#data_type) - enum[decimal,octal,hexadecimal,boolean]
+ | | | | | | |-[delay_flex](#delay_flex) - string
+ | | | | | | |-[delta](#delta) - enum[as is,Delta (speed per second),Delta (simple change)]
+ | | | | | | |-[description](#description) - string
+ | | | | | | |-[error](#error) - string
+ | | | | | | |-[flags](#flags) - string
+ | | | | | | |-[formula](#formula) - number
+ | | | | | | |-[history](#history) - number
+ | | | | | | |-[inventory_link](#inventory_link) - number
+ | | | | | | |-[ipmi_sensor](#ipmi_sensor) - string
+ | | | | | | |-[lastclock](#lastclock) - string
+ | | | | | | |-[lastns](#lastns) - number
+ | | | | | | |-[lastvalue](#lastvalue) - string
+ | | | | | | |-[logtimefmt](#logtimefmt) - string
+ | | | | | | |-[mtime](#mtime) - string
+ | | | | | | |-[multiplier](#multiplier) - number
+ | | | | | | |-[params](#params) - string
+ | | | | | | |-[password](#password) - string
+ | | | | | | |-[port](#port) - string
+ | | | | | | |-[prevvalue](#prevvalue) - string
+ | | | | | | |-[privatekey](#privatekey) - string
+ | | | | | | |-[publickey](#publickey) - string
+ | | | | | | |-[snmp](#snmp)
+ | | | | | | | |-[snmp_community](#snmp_community) - string
+ | | | | | | | |-[snmp_oid](#snmp_oid) - string
+ | | | | | | | |-[snmpv3_authpassphrase](#snmpv3_authpassphrase) - string
+ | | | | | | | |-[snmpv3_authprotocol](#snmpv3_authprotocol) - enum[MD5,SHA]
+ | | | | | | | |-[snmpv3_contextname](#snmpv3_contextname) - string
+ | | | | | | | |-[snmpv3_privpassphrase](#snmpv3_privpassphrase) - string
+ | | | | | | | |-[snmpv3_privprotocol](#snmpv3_privprotocol) - enum[DES,AES]
+ | | | | | | | |-[snmpv3_securitylevel](#snmpv3_securitylevel) - enum[noAuthNoPriv,authNoPriv,authPriv]
+ | | | | | | | |-[snmpv3_securityname](#snmpv3_securityname) - string
+ | | | | | | |-[state](#state) - string
+ | | | | | | |-[status](#status) - enum[enabled,disabled]
+ | | | | | | |-[templateid](#templateid) - string
+ | | | | | | |-[trapper_hosts](#trapper_hosts) - string
+ | | | | | | |-[trends](#trends) - number
+ | | | | | | |-[units](#units) - string
+ | | | | | | |-[username](#username) - string
+ | | | | | | |-[valuemapid](#valuemapid) - string
+ | | | | |-[Triggers](#triggers)
+ | | | | | |-[ZabbixTrigger](#zabbixtrigger) - string
+ | | | | | | |-[triggerId](#triggerid) - string
+ | | | | | | |-[description](#description) - string
+ | | | | | | |-[expression](#expression) - string
+ | | | | | | |-[comments](#comments) - string
+ | | | | | | |-[error](#error) - string
+ | | | | | | |-[flags](#flags) - string
+ | | | | | | |-[lastchange](#lastchange) - string
+ | | | | | | |-[priority](#priority) - enum[not classified,information,warning,average,high,disaster]
+ | | | | | | |-[state](#state) - string
+ | | | | | | |-[status](#status) - enum[enabled,disabled]
+ | | | | | | |-[templateid](#templateid) - string
+ | | | | | | |-[type](#type) - enum[single event,multple events]
+ | | | | | | |-[url](#url) - string
+ | | | | | | |-[Events](#events)
+ | | | | | | | |-[ZabbixEvent](#zabbixevent)
+ | | | | | | | | |-[eventid](#eventid) - string
+ | | | | | | | | |-[acknowledged](#acknowledged) - number
+ | | | | | | | | | |-[Acknowledgements](#acknowledgements)
+ | | | | | | | | | | |-[ZabbixAcknowledgement](#zabbixacknowledgement)
+ | | | | | | | | | | | |-[userid](#userid) - string
+ | | | | | | | | | | | | |-[alias](#alias) - string
+ | | | | | | | | | | | | |-[name](#name) - string
+ | | | | | | | | | | | | |-[surname](#surname) - string
+ | | | | | | | | | | | |-[clock](#clock) - string
+ | | | | | | | | | | | |-[message](#message) - string
+ | | | | | | | | |-[clock](#clock) - string
+ | | | | | | | | |-[ns](#ns) - string
+ | | | | | | | | |-[object](#object) - string
+ | | | | | | | | |-[objectid](#objectid) - string
+ | | | | | | | | |-[source](#source) - string
+ | | | | | | | | |-[value](#value) - string
+ | | | | | | | | |-[value_changed](#value_changed) - number
+ | | | | | | | | |-[@Acknowledge_Event(message)](#acknowledge_event)
+ | | | | | | | | |-[Alerts](#alerts)
+ | | | | | | | | | |-[ZabbixAlert](#zabbixalert)
+ | | | | | | | | | | |-[actionid](#actionid) - string
+ | | | | | | | | | | |-[alerttype](#alerttype) - string
+ | | | | | | | | | | |-[clock](#clock) - string
+ | | | | | | | | | | |-[error](#error) - string
+ | | | | | | | | | | |-[esc_step](#esc_step) - number
+ | | | | | | | | | | |-[eventid](#eventid) - string
+ | | | | | | | | | | |-[mediatypeid](#mediatypeid) - string
+ | | | | | | | | | | |-[message](#message)
+ | | | | | | | | | | |-[retries](#retries) - number
+ | | | | | | | | | | |-[sendto](#sendto) - string
+ | | | | | | | | | | |-[status](#status) - string
+ | | | | | | | | | | |-[subject](#subject) - string
+ | | | | | | | | | | |-[userid](#userid)
  </pre>
 
 ---
